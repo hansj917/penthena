@@ -453,3 +453,27 @@ body, .stApp, .main-content,
 [data-testid="stChatInput"] textarea {
   background: transparent !important;
 }
+
+/* ================================================================
+   Windows 호환: 사이드바 '삭제' 버튼 완전 투명 처리 & 채팅 입력창 배경 제거
+   ============================================================== */
+
+/* 1. 사이드바 ‘삭제’ 버튼 (data-testid 기준) */
+[data-testid="stSidebar"] .stButton [data-testid="clear_history"] {
+  background-color: transparent !important;
+  background-image: none         !important;
+  box-shadow: none               !important;
+  border: none                   !important;
+  color: var(--text-dark)        !important;
+}
+/* 1-1. 버튼 호버 시에도 배경 남지 않도록 */
+[data-testid="stSidebar"] .stButton [data-testid="clear_history"]:hover {
+  background-color: transparent !important;
+}
+
+/* 2. 채팅 입력창(프롬프트) 내부 모든 흰색 배경 제거 */
+[data-testid="stChatInput"] *,
+[data-testid="stChatInput"] form > div,
+[data-testid="stChatInput"] textarea {
+  background: transparent !important;
+}
