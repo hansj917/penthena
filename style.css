@@ -1,9 +1,9 @@
 /* =================================================================================
- * PENTHENA AI Agent - v18.7 Stylesheet (유동성 및 안정성 강화)
+ * PENTHENA AI Agent - v19.1 Stylesheet (Windows UI 최종 수정)
  * =================================================================================
- * - '라이브 로그 피드' UI 스타일 추가
- * - 리서치 브리핑 카드 디자인 완성도 향상
- * - 전체적인 디자인 일관성 및 안정성 강화
+ * - Windows 환경에서의 모든 UI 깨짐 현상(흰 배경, 흰 글씨) 해결
+ * - Expander, ChatInput, Header 등 모든 컴포넌트 스타일 강제 지정
+ * - 전체적인 디자인 일관성 및 안정성 최종 강화
  * ================================================================================= */
 
 /* --- 1. 폰트 및 기본 설정 --- */
@@ -14,10 +14,10 @@
     --primary-accent: #6C5FF5; 
     --primary-accent-rgb: 108, 95, 245;
     --secondary-accent: #78C4D3; 
-
-    --text-light: #FFFFFF;    /* Windows 호환성을 위해 완전한 흰색으로 변경 */
-    --text-medium: #FFFFFF;   /* 흰색과 대비를 위해 미세 조정 */
-    --text-dark: #FFFFFF;
+    
+    --text-light: #FFFFFF;    
+    --text-medium: #A8A8B5;   
+    --text-dark: #606070;
     
     --bg-base: #0A0A0F;       
     --bg-surface: #12121A;   
@@ -54,9 +54,8 @@ body {
     color: var(--text-light);
 }
 
-/* 앱 전체 배경 및 애니메이션 */
 .stApp {
-    background-color: var(--bg-base);
+    background-color: var(--bg-base) !important;
     background-image: radial-gradient(circle at 10% 10%, rgba(var(--primary-accent-rgb), 0.1) 0%, transparent 30%),
                       radial-gradient(circle at 90% 80%, rgba(80, 150, 255, 0.1) 0%, transparent 30%);
     animation: fadeIn 0.8s ease-in-out;
@@ -67,7 +66,7 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Streamlit 기본 컴포넌트 오버라이드 */
+/* --- 4. Streamlit 기본 컴포넌트 오버라이드 --- */
 .stAlert[data-testid="st.warning"] {
     background-color: rgba(var(--warning-color-rgb), 0.1);
     border-left: 4px solid var(--warning-color);
@@ -89,7 +88,7 @@ body {
 }
 
 
-/* --- 4. 사이드바 스타일 --- */
+/* --- 5. 사이드바 스타일 --- */
 [data-testid="stSidebar"] {
     background: rgba(var(--bg-surface), 0.8);
     backdrop-filter: blur(10px);
@@ -163,7 +162,7 @@ body {
     background-color: var(--bg-surface); border-color: var(--primary-accent); color: var(--text-light); transform: translateX(4px);
 }
 
-/* --- 5. 메인 컨텐츠 스타일 --- */
+/* --- 6. 메인 컨텐츠 스타일 --- */
 .main-content { padding: 1rem 3rem; }
 .main-content h1 { font-size: 2.8em; font-weight: 800; }
 .main-content h2 { 
@@ -182,7 +181,8 @@ body {
     background: none;
     border: none;
 }
-.main-content .st-emotion-cache-1h6xps4 { color: var(--text-medium) !important; }
+
+/* --- 7. 컴포넌트별 상세 스타일 --- */
 
 /* 분석 예시 카드 */
 .example-prompt-container .stButton>button {
@@ -201,7 +201,7 @@ body {
     font-size: 1em; font-weight: 500; padding: 1rem 1.5rem;
     background: linear-gradient(90deg, var(--bg-surface), var(--bg-base));
     border-left: 4px solid var(--primary-accent); border-radius: var(--radius-md);
-    margin: 3rem 0 2rem 0; color: var(--text-medium);
+    margin: 3rem 0 2rem 0;
 }
 
 /* 워크플로우 진행률 바 */
@@ -216,9 +216,6 @@ body {
     white-space: nowrap; transition: var(--transition);
 }
 .progress-item:last-child { border-right: none; }
-.progress-item.done { color: var(--text-medium); }
-.progress-item.working { color: var(--text-light); font-weight: 600; background-color: var(--primary-accent); }
-.progress-item.pending { color: var(--text-dark); }
 
 
 /* 각 분석 단계 컨테이너 */
@@ -231,13 +228,7 @@ body {
     box-shadow: 0 0 25px rgba(var(--primary-accent-rgb), 0.1);
     border-color: rgba(var(--primary-accent-rgb), 0.5);
 }
-.step-content-card h5 { 
-    text-align: center; color: var(--text-medium); font-weight: 500;
-    margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color);
-}
 hr.step-divider { background-color: transparent; margin: 2rem 0; border-top: 1px dashed var(--border-color); }
-
-/* --- 6. 컴포넌트별 상세 스타일 --- */
 
 /* 리서치 브리핑 카드 */
 .briefing-container {
@@ -267,17 +258,10 @@ hr.step-divider { background-color: transparent; margin: 2rem 0; border-top: 1px
     font-size: 1.1em;
 }
 .briefing-icon {
-    width: 32px;
-    height: 32px;
-    min-width: 32px;
-    margin-right: 1rem;
-    background-color: rgba(var(--primary-accent-rgb), 0.1);
-    border-radius: var(--radius-sm);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-size: 60%;
-    background-repeat: no-repeat;
+    width: 32px; height: 32px; min-width: 32px;
+    margin-right: 1rem; background-color: rgba(var(--primary-accent-rgb), 0.1);
+    border-radius: var(--radius-sm); display: flex; align-items: center;
+    justify-content: center; background-size: 60%; background-repeat: no-repeat;
     background-position: center;
 }
 .briefing-icon.summary { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236C5FF5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/%3E%3C/svg%3E"); }
@@ -286,50 +270,12 @@ hr.step-divider { background-color: transparent; margin: 2rem 0; border-top: 1px
 .briefing-icon.audience { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236C5FF5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='9' cy='7' r='4'/%3E%3Cpath d='M23 21v-2a4 4 0 0 0-3-3.87'/%3E%3Cpath d='M16 3.13a4 4 0 0 1 0 7.75'/%3E%3C/svg%3E"); }
 .briefing-icon.tech { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236C5FF5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='16 18 22 12 16 6'/%3E%3Cpolyline points='8 6 2 12 8 18'/%3E%3C/svg%3E"); }
 .briefing-icon.stats { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236C5FF5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20v-6M6 20v-10M18 20V4'/%3E%3C/svg%3E"); }
-.briefing-content {
-    font-size: 0.9em;
-    color: var(--text-medium);
-    line-height: 1.7;
-}
-
-/* 딥다이브 Expander */
-.stExpander {
-    margin-top: 1rem; border: 1px solid var(--border-color) !important;
-    border-radius: var(--radius-md) !important; background-color: transparent !important;
-    transition: var(--transition);
-}
-.stExpander:hover { border-color: rgba(var(--primary-accent-rgb), 0.5) !important; }
-.stExpander header {
-    font-weight: 500 !important; color: var(--text-medium) !important;
-    padding-top: 12px !important; padding-bottom: 12px !important;
-    transition: var(--transition);
-}
-.stExpander header:hover { color: var(--primary-accent) !important; }
-.stExpander .st-emotion-cache-1h6xps4 p {
-    font-size: 0.9em;
-}
+.briefing-content { font-size: 0.9em; color: var(--text-medium); line-height: 1.7; }
 
 /* 페르소나 카드 */
-.persona-card {
-    background-color: var(--bg-element); border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg); padding: 24px; height: 100%;
-    transition: var(--transition);
-}
-.persona-card:hover {
-    transform: translateY(-5px); border-color: var(--primary-accent);
-    box-shadow: 0 8px 30px rgba(var(--primary-accent-rgb), 0.1);
-}
-.persona-card .persona-icon {
-    width: 40px;
-    height: 40px;
-    margin-bottom: 16px;
-    background-color: var(--bg-surface);
-    border-radius: 50%;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236C5FF5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
-    background-size: 20px;
-    background-position: center;
-    background-repeat: no-repeat;
-}
+.persona-card { background-color: var(--bg-element); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 24px; height: 100%; transition: var(--transition); }
+.persona-card:hover { transform: translateY(-5px); border-color: var(--primary-accent); box-shadow: 0 8px 30px rgba(var(--primary-accent-rgb), 0.1); }
+.persona-card .persona-icon { width: 40px; height: 40px; margin-bottom: 16px; background-color: var(--bg-surface); border-radius: 50%; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236C5FF5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E"); background-size: 20px; background-position: center; background-repeat: no-repeat; }
 .persona-card h4 { font-size: 1.2em; color: var(--text-light); margin-bottom: 4px; }
 .persona-card .persona-info { font-size: 0.9em; color: var(--text-medium); margin-bottom: 16px; }
 .persona-card .persona-divider { border: none; height: 1px; background-color: var(--border-color); margin: 16px 0; }
@@ -337,343 +283,103 @@ hr.step-divider { background-color: transparent; margin: 2rem 0; border-top: 1px
 .persona-card p { font-size: 0.9em; color: var(--text-light); line-height: 1.6; }
 
 /* 타겟 & 메시지 카드 */
-.message-card-container {
-    display: flex; flex-direction: column; gap: 1rem;
-    border: 1px solid var(--border-color); border-radius: var(--radius-lg);
-    padding: 1.5rem; background-color: var(--bg-element); height: 100%;
-}
+.message-card-container { display: flex; flex-direction: column; gap: 1rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.5rem; background-color: var(--bg-element); height: 100%; }
 .message-card-target, .message-card-slogan { padding: 1rem; }
 .message-card-target { border-bottom: 1px dashed var(--border-color); }
-.message-card-container h6 {
-    font-size: 0.8em; font-weight: 700; color: var(--text-dark);
-    letter-spacing: 1px; margin-bottom: 0.8rem; text-transform: uppercase;
-}
+.message-card-container h6 { font-size: 0.8em; font-weight: 700; color: var(--text-dark); letter-spacing: 1px; margin-bottom: 0.8rem; text-transform: uppercase; }
 .message-card-target p { font-size: 1em; color: var(--text-light); }
 .message-card-slogan p { font-size: 1.3em; color: var(--secondary-accent); font-weight: 600; text-align: center; }
 
 /* 콘텐츠 전략 카드 */
-.content-strategy-card {
-    background-color: var(--bg-element); border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg); height: 100%; display: flex;
-    flex-direction: column; transition: var(--transition);
-}
-.content-strategy-card:hover {
-    transform: translateY(-5px); border-color: var(--secondary-accent);
-}
-.content-card-header {
-    padding: 0.8rem 1.2rem; background-color: var(--bg-surface);
-    color: var(--secondary-accent); font-weight: 600;
-    border-bottom: 1px solid var(--border-color);
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-}
-.content-card-body {
-    padding: 1.2rem; font-size: 0.9em; line-height: 1.6;
-    color: var(--text-medium); flex-grow: 1;
-}
+.content-strategy-card { background-color: var(--bg-element); border: 1px solid var(--border-color); border-radius: var(--radius-lg); height: 100%; display: flex; flex-direction: column; transition: var(--transition); }
+.content-strategy-card:hover { transform: translateY(-5px); border-color: var(--secondary-accent); }
+.content-card-header { padding: 0.8rem 1.2rem; background-color: var(--bg-surface); color: var(--secondary-accent); font-weight: 600; border-bottom: 1px solid var(--border-color); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+.content-card-body { padding: 1.2rem; font-size: 0.9em; line-height: 1.6; color: var(--text-medium); flex-grow: 1; }
 
 /* --- 7. 채팅 UI 개선 --- */
-[data-testid="stChatMessage"] { 
-    background-color: transparent; 
-    border: none;
-    padding: 0;
-    margin-bottom: 1rem;
-}
-[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] {
-    padding: 1rem 1.5rem;
-    border-radius: var(--radius-lg);
-    line-height: 1.6;
-}
-[data-testid="stChatMessage"]:has([data-testid-chat-role="assistant"]) [data-testid="stMarkdownContainer"] {
-    background-color: var(--bg-surface);
-}
-[data-testid="stChatMessage"]:has([data-testid-chat-role="user"]) [data-testid="stMarkdownContainer"] {
-    background-color: var(--primary-accent);
-    color: #ffffff;
-}
+[data-testid="stChatMessage"] { background-color: transparent; border: none; padding: 0; margin-bottom: 1rem; }
+[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] { padding: 1rem 1.5rem; border-radius: var(--radius-lg); line-height: 1.6; }
+[data-testid="stChatMessage"]:has([data-testid-chat-role="assistant"]) [data-testid="stMarkdownContainer"] { background-color: var(--bg-surface); }
+[data-testid="stChatMessage"]:has([data-testid-chat-role="user"]) [data-testid="stMarkdownContainer"] { background-color: var(--primary-accent); color: #ffffff; }
 
 /* 채팅 아바타 아이콘 재정의 */
-[data-testid="stChatMessage"] [data-testid="stAvatar"] svg {
-    display: none;
-}
-[data-testid="stChatMessage"] [data-testid="stAvatar"] {
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 70%;
-    border-radius: var(--radius-sm);
-}
-[data-testid="stChatMessage"][data-testid-chat-role="assistant"] [data-testid="stAvatar"] {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236C5FF5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 8V4H8'/%3E%3Crect x='4' y='12' width='16' height='8' rx='2'/%3E%3Cpath d='M2 14h2'/%3E%3Cpath d='M20 14h2'/%3E%3Cpath d='M15 12v-2a3 3 0 0 0-3-3H9M9 12a3 3 0 0 0-3 3v0'/%3E%3C/svg%3E");
-    border: 1px solid var(--border-color);
-    background-color: var(--bg-surface);
-}
-[data-testid="stChatMessage"][data-testid-chat-role="user"] [data-testid="stAvatar"] {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23EAEBF0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
-    background-color: var(--primary-accent);
-}
+[data-testid="stChatMessage"] [data-testid="stAvatar"] svg { display: none; }
+[data-testid="stChatMessage"] [data-testid="stAvatar"] { background-repeat: no-repeat; background-position: center; background-size: 70%; border-radius: var(--radius-sm); }
+[data-testid="stChatMessage"][data-testid-chat-role="assistant"] [data-testid="stAvatar"] { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236C5FF5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 8V4H8'/%3E%3Crect x='4' y='12' width='16' height='8' rx='2'/%3E%3Cpath d='M2 14h2'/%3E%3Cpath d='M20 14h2'/%3E%3Cpath d='M15 12v-2a3 3 0 0 0-3-3H9M9 12a3 3 0 0 0-3 3v0'/%3E%3C/svg%3E"); border: 1px solid var(--border-color); background-color: var(--bg-surface); }
+[data-testid="stChatMessage"][data-testid-chat-role="user"] [data-testid="stAvatar"] { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23EAEBF0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E"); background-color: var(--primary-accent); }
 
 /* 채팅 입력창 */
 [data-testid="stChatInput"] { background: transparent !important; }
-[data-testid="stChatInput"] form > div {
-    border: 1px solid var(--border-color) !important; border-radius: var(--radius-md) !important;
-    background-color: var(--bg-surface) !important;
-    transition: var(--transition);
-}
-[data-testid="stChatInput"] form > div:hover {
-    border-color: var(--primary-accent) !important;
-}
+[data-testid="stChatInput"] form > div { border: 1px solid var(--border-color) !important; border-radius: var(--radius-md) !important; background-color: var(--bg-surface) !important; transition: var(--transition); }
+[data-testid="stChatInput"] form > div:hover { border-color: var(--primary-accent) !important; }
 [data-testid="stChatInput"] textarea { background: transparent !important; color: var(--text-light) !important; }
 [data-testid="stBottomBlockContainer"] { background-color: var(--bg-base) !important; }
 
 /* 기타 UI 요소 정리 */
 #MainMenu, footer, header { visibility: hidden; }
 
-/* --- 8. [추가] Windows 폰트 색상 강제 지정 --- */
-/* Mac과 Windows 환경 간의 폰트 렌더링 차이로 인한 회색 폰트 문제를 해결하기 위해,
-   주요 텍스트 컴포넌트의 색상을 흰색으로 강제합니다. */
-body,
-.stApp,
-[data-testid="stMarkdownContainer"] p,
-[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] p,
+
+/* --- 8. [최종 UI 수정] Windows 및 컴포넌트별 스타일 강제 지정 --- */
+
+/* 8.1. 모든 주요 텍스트 색상을 흰색으로 강제 (Windows 호환성) */
+body, .stApp, .main-content,
+[data-testid="stMarkdownContainer"],
 [data-testid="stChatInput"] textarea,
-.st-emotion-cache-1h6xps4 p, /* Streamlit의 특정 문단 스타일 타겟팅 추가 */
-.stAlert p
+.st-emotion-cache-1h6xps4 p
 {
-    color: #FFFFFF !important;
+    color: var(--text-light) !important;
 }
 
-/* 단, 의도적으로 회색으로 디자인된 보조 텍스트들은 
-   위의 강제 지정에서 제외하고 원래 색상을 유지하도록 재정의합니다.
-*/
-.sidebar-date, 
-.info-item .info-label, 
-.persona-info, 
-.step-content-card h5,
-.message-card-container h6,
-.briefing-content,
-[data-testid="stSidebar"] h5,
-.main-content .st-emotion-cache-1h6xps4
-{
+.main-content h1, .main-content h2, .main-content h3, .main-content h4, .main-content h5 {
+    color: var(--text-light) !important;
+}
+
+/* 8.2. Expander 내부 흰색 배경 및 텍스트 문제 해결 */
+[data-testid="stExpander"] > details {
+    background-color: transparent !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--radius-md) !important;
+}
+[data-testid="stExpander"] > details:hover {
+    border-color: var(--primary-accent) !important;
+}
+[data-testid="stExpander"] > summary, [data-testid="stExpander"] > summary p {
+    color: var(--text-medium) !important;
+    font-weight: 500 !important;
+}
+[data-testid="stExpander"] > summary:hover, [data-testid="stExpander"] > summary:hover p {
+    color: var(--primary-accent) !important;
+}
+[data-testid="stExpander"] [data-testid="stExpanderDetails"] {
+    background-color: var(--bg-element) !important;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    padding: 1rem;
+}
+[data-testid="stExpander"] [data-testid="stExpanderDetails"] * {
+    color: var(--text-light) !important;
+}
+
+/* 8.3. 특정 컴포넌트 색상 미세 조정 */
+.pipeline-header, .progress-item.working {
+    color: var(--text-light) !important;
+}
+.progress-item.done {
     color: var(--text-medium) !important;
 }
-
-.stException {
-    color: initial !important;
+.progress-item.pending {
+    color: var(--text-dark) !important;
 }
 
-/* Expander 내부 마크다운 전체 덮어쓰기 */
-[data-testid="stExpander"] .stMarkdownContainer {
-  background-color: var(--bg-element) !important;
-  color: var(--text-light)      !important;
-}
-
-/* Expander 안의 코드 블록(프리formatted) 텍스트도 흰색으로 */
-[data-testid="stExpander"] pre {
-  background-color: var(--bg-element) !important;
-  color: var(--text-light)      !important;
-}
-
-/* ────────────────────────────────────────────────────────
-   1. 메인 콘텐츠 모든 헤딩을 순수 흰색으로
-──────────────────────────────────────────────────────── */
-.main-content h1,
-.main-content h2,
-.main-content h3,
-.main-content h4,
-.main-content h5,
-.main-content h6 {
-  color: #FFFFFF !important;
-}
-
-/* ────────────────────────────────────────────────────────
-   2. Expander(재구성 브리핑 등) 헤더도 흰색으로
-──────────────────────────────────────────────────────── */
-[data-testid="stExpander"] > header {
-  color: #FFFFFF !important;
-}
-
-/* 1) 파이프라인 단계(step) 제목 */
-.step-content-card h5 {
-  color: var(--text-light) !important;
-}
-
-/* 2) AI 리서치 브리핑 카드(sub-section) 제목 */
-.briefing-header h4 {
-  color: var(--text-light) !important;
-}
-
-/* 3) Expander(“AI 리서치 브리핑 (재구성)” 등) 버튼 헤더 */
-[data-testid="stExpanderHeader"],
-.stExpanderHeader,
-button[aria-expanded] > div > span {
-  color: var(--text-light) !important;
-}
-
-/* 4) Streamlit 마크다운 컨테이너 내부 하위 헤딩 */
-[data-testid="stMarkdownContainer"] h2,
-[data-testid="stMarkdownContainer"] h3,
-[data-testid="stMarkdownContainer"] h4 {
-  color: var(--text-light) !important;
-}
-
-/* ────────────────────────────────────────────────────────
-   Windows 전용 텍스트박스 보정
-──────────────────────────────────────────────────────── */
-
-/* 1) 모든 텍스트에 흰색 커서(캐럿) 컬러 */
-textarea {
-  caret-color: var(--text-light) !important;
-}
-
-/* 2) 플레이스홀더(안내문구) 흰색 계열로 */
-textarea::placeholder {
-  color: rgba(255,255,255,0.6) !important;
-}
-
-/* 3) ChatInput / TextArea 배경·글자색 전부 어두운 배경 + 흰색 폰트로 */
-[data-testid="stChatInput"] textarea,
-textarea {
-  background-color: var(--bg-element) !important;
-  color:            var(--text-light)   !important;
-}
-
-/* 4) 혹시 Streamlit Text Input 컴포넌트에도 적용 */
-[data-testid="stTextInput"] input {
-  background-color: var(--bg-element) !important;
-  color:            var(--text-light)   !important;
-}
-[data-testid="stTextInput"] input::placeholder {
-  color: rgba(255,255,255,0.6) !important;
-}
-
-/* ────────────────────────────────────────────────────────
-   1) 하단 바 전체 배경 통일
-──────────────────────────────────────────────────────── */
-[data-testid="stBottomBlockContainer"] {
-  background-color: var(--bg-base) !important;
-  border-top: 1px solid var(--border-color) !important;
-}
-
-/* ────────────────────────────────────────────────────────
-   2) ChatInput 래퍼(외곽) 배경 통일
-──────────────────────────────────────────────────────── */
-[data-testid="stChatInput"] {
-  background-color: var(--bg-base) !important;
-}
-
-/* ────────────────────────────────────────────────────────
-   3) 입력폼 컨테이너(테두리 안쪽) 배경 통일
-──────────────────────────────────────────────────────── */
-[data-testid="stChatInput"] form > div {
-  background-color: var(--bg-element) !important;
-  border: none !important;
-}
-
-/* ────────────────────────────────────────────────────────
-   4) 실제 텍스트 에어리어 배경 & 글자색 통일
-──────────────────────────────────────────────────────── */
+/* 8.4. 채팅 입력창 최종 보정 (Windows) */
 [data-testid="stChatInput"] textarea {
-  background-color: var(--bg-element) !important;
-  color: var(--text-light)    !important;
+    background-color: var(--bg-element) !important;
+    color: var(--text-light)   !important;
+    caret-color: var(--text-light) !important;
 }
-
-/* ────────────────────────────────────────────────────────
-   5) 전송(Submit) 버튼 배경 & 글자색 통일
-──────────────────────────────────────────────────────── */
-[data-testid="stChatInput"] form button,
-[data-testid="stChatInput"] button[type="submit"] {
-  background-color: var(--bg-surface) !important;
-  color: var(--text-light)   !important;
-  border: none               !important;
-}
-
-/* ────────────────────────────────────────────────────────
-   6) 전송 버튼 내부 아이콘 래퍼까지 덮어쓰기
-──────────────────────────────────────────────────────── */
-[data-testid="stChatInput"] form button > div {
-  background-color: var(--bg-surface) !important;
-}
-
-/* ────────────────────────────────────────────────────────
-   ▼ ▼ ▼ Bottom ChatInput 완전 통일(Windows 대응) ▼ ▼ ▼
-──────────────────────────────────────────────────────── */
-
-/* 1) 하단 바 전체(Drag handle 포함) 배경을 어두운 bg-base 로 */
-[data-testid="stBottomBlockContainer"] {
-  background-color: var(--bg-base) !important;
-  border-top: 1px solid var(--border-color) !important;
-}
-
-/* 2) ChatInput 래퍼(외곽) 배경도 bg-base 로 */
-[data-testid="stChatInput"] {
-  background-color: var(--bg-base) !important;
-}
-
-/* 3) 입력 폼 컨테이너(테두리 없는 박스) 배경을 bg-element 로 */
-[data-testid="stChatInput"] form > div {
-  background-color: var(--bg-element) !important;
-  border: none !important;
-  padding: 0 !important;
-}
-
-/* 4) textarea(입력창) 자체도 bg-element + 흰 글씨 */
-[data-testid="stChatInput"] textarea {
-  background-color: var(--bg-element) !important;
-  color: var(--text-light)    !important;
-  caret-color: var(--text-light) !important;
-  outline: none !important;
-}
-
-/* 5) placeholder(안내문구) 색상 보정 */
 [data-testid="stChatInput"] textarea::placeholder {
-  color: rgba(255,255,255,0.6) !important;
-}
-
-/* 6) 전송 버튼(화살표) 배경 & 아이콘 색상 통일 */
-[data-testid="stChatInput"] form button,
-[data-testid="stChatInput"] form button > div {
-  background-color: var(--bg-element) !important;
-  border: none !important;
+    color: rgba(255,255,255,0.6) !important;
 }
 [data-testid="stChatInput"] form button svg {
-  stroke: var(--text-light) !important;
-  fill: none                 !important;
-}
-
-/* ──────────────────────────────────────────────────────── */
-/* ────────────────────────────────────────────────────────
-   상단 예시 프롬프트 버튼 다크 모드 배경
-──────────────────────────────────────────────────────── */
-.example-prompt-container .stButton > button {
-  background-color: var(--bg-element) !important;  /* 기존 밝은 흰색 대신 어두운 표면 색 */
-  color:            var(--text-light)   !important;
-}
-.example-prompt-container .stButton > button:hover {
-  background-color: var(--bg-surface) !important; /* 호버 시 살짝 더 어두운 색으로 */
-}
-
-/* ────────────────────────────────────────────────────────
-   “AI 기반 차세대 WAF 솔루션 사업 계획” 텍스트 입력창 다크 모드 배경
-──────────────────────────────────────────────────────── */
-[data-testid="stTextInput"] input {
-  background-color: var(--bg-element) !important;  /* 어두운 입력창 배경 */
-  color:            var(--text-light)   !important; /* 입력 텍스트 흰색 */
-}
-[data-testid="stTextInput"] input::placeholder {
-  color: rgba(255,255,255,0.6) !important;         /* 플레이스홀더 반투명 흰색 */
-}
-
-/* ────────────────────────────────────────────────────────
-   (혹시 ChatInput 사용 시)
-   채팅 입력창 상단도 동일하게 다크 배경 적용
-──────────────────────────────────────────────────────── */
-[data-testid="stChatInput"] form > div {
-  background-color: var(--bg-element) !important;
-  border: 1px solid var(--border-color) !important;
-}
-[data-testid="stChatInput"] textarea {
-  background-color: var(--bg-element) !important;
-  color:            var(--text-light)   !important;
-}
-[data-testid="stChatInput"] textarea::placeholder {
-  color: rgba(255,255,255,0.6) !important;
+    stroke: var(--text-light) !important;
+    fill: none !important;
 }
