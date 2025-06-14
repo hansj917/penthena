@@ -471,3 +471,22 @@ body,
   background-color: var(--bg-element) !important;
   color: var(--text-light)      !important;
 }
+
+/* ────────────────────────────────────────────────────────
+   1. 메인 콘텐츠 모든 헤딩을 순수 흰색으로
+──────────────────────────────────────────────────────── */
+.main-content h1,
+.main-content h2,
+.main-content h3,
+.main-content h4,
+.main-content h5,
+.main-content h6 {
+  color: #FFFFFF !important;
+}
+
+/* ────────────────────────────────────────────────────────
+   2. Expander(재구성 브리핑 등) 헤더도 흰색으로
+──────────────────────────────────────────────────────── */
+[data-testid="stExpander"] > header {
+  color: #FFFFFF !important;
+}
