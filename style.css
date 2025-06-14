@@ -426,3 +426,36 @@ hr.step-divider { background-color: transparent; margin: 2rem 0; border-top: 1px
 
 /* 기타 UI 요소 정리 */
 #MainMenu, footer, header { visibility: hidden; }
+
+/* --- 8. [추가] Windows 폰트 색상 강제 지정 --- */
+/* Mac과 Windows 환경 간의 폰트 렌더링 차이로 인한 회색 폰트 문제를 해결하기 위해,
+   주요 텍스트 컴포넌트의 색상을 흰색으로 강제합니다. */
+body,
+.stApp,
+[data-testid="stMarkdownContainer"] p,
+[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] p,
+[data-testid="stChatInput"] textarea,
+.st-emotion-cache-1h6xps4 p, /* Streamlit의 특정 문단 스타일 타겟팅 추가 */
+.stAlert p
+{
+    color: #FFFFFF !important;
+}
+
+/* 단, 의도적으로 회색으로 디자인된 보조 텍스트들은 
+   위의 강제 지정에서 제외하고 원래 색상을 유지하도록 재정의합니다.
+*/
+.sidebar-date, 
+.info-item .info-label, 
+.persona-info, 
+.step-content-card h5,
+.message-card-container h6,
+.briefing-content,
+[data-testid="stSidebar"] h5,
+.main-content .st-emotion-cache-1h6xps4
+{
+    color: var(--text-medium) !important;
+}
+
+.stException {
+    color: initial !important;
+}
