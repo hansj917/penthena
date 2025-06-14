@@ -383,3 +383,55 @@ body, .stApp, .main-content,
     stroke: var(--text-light) !important;
     fill: none !important;
 }
+
+/* =================================================================================
+ * v19.2 - Windows UI 호환성 최종 수정 패치
+ * ================================================================================= */
+
+/* 1. 예시 프롬프트 버튼 배경 강제 지정 */
+.example-prompt-container .stButton > button {
+    background-color: var(--bg-surface) !important;
+    color: var(--text-light) !important;
+    border: 1px solid var(--border-color) !important;
+}
+.example-prompt-container .stButton > button:hover {
+    border-color: var(--primary-accent) !important;
+    background-color: var(--bg-element) !important;
+}
+
+/* 2. 사이드바 '삭제' 버튼 배경 강제 지정 */
+[data-testid="stSidebar"] .stButton button[id*="clear_history"] {
+    background: transparent !important;
+    color: var(--text-dark) !important;
+}
+[data-testid="stSidebar"] .stButton button[id*="clear_history"]:hover {
+    color: var(--danger-color) !important;
+    background-color: rgba(var(--danger-color-rgb), 0.1) !important;
+}
+
+/* 3. 하단 바 및 채팅 입력창 전체 배경 강제 지정 */
+[data-testid="stBottom"] {
+    background-color: var(--bg-base) !important;
+    border-top: 1px solid var(--border-color) !important;
+}
+[data-testid="stBottomBlockContainer"] {
+    background-color: var(--bg-base) !important;
+}
+[data-testid="stChatInput"] {
+    background-color: var(--bg-base) !important;
+}
+[data-testid="stChatInput"] form > div {
+    background-color: var(--bg-element) !important;
+    border: 1px solid var(--border-color) !important;
+}
+[data-testid="stChatInput"] form > div:hover {
+    border-color: var(--primary-accent) !important;
+}
+
+/* 4. 기타 모든 텍스트 색상 최종 보정 */
+.main-content .st-emotion-cache-1h6xps4 {
+    color: var(--text-medium) !important;
+}
+.pipeline-header {
+    color: var(--text-light) !important;
+}
