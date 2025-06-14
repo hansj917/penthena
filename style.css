@@ -1,0 +1,428 @@
+/* =================================================================================
+ * PENTHENA AI Agent - v18.7 Stylesheet (유동성 및 안정성 강화)
+ * =================================================================================
+ * - '라이브 로그 피드' UI 스타일 추가
+ * - 리서치 브리핑 카드 디자인 완성도 향상
+ * - 전체적인 디자인 일관성 및 안정성 강화
+ * ================================================================================= */
+
+/* --- 1. 폰트 및 기본 설정 --- */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+/* --- 2. 디자인 시스템 (CSS 변수) --- */
+:root {
+    --primary-accent: #6C5FF5; 
+    --primary-accent-rgb: 108, 95, 245;
+    --secondary-accent: #78C4D3; 
+    
+    --text-light: #EAEBF0;    
+    --text-medium: #A0A0B8;   
+    --text-dark: #606070;
+    
+    --bg-base: #0A0A0F;       
+    --bg-surface: #12121A;   
+    --bg-element: #1A1A24;   
+    --border-color: #2A2A38;
+    
+    --success-color: #00D8A4;
+    --danger-color: #FF5070;
+    --danger-color-rgb: 255, 80, 112;
+    --warning-color: #FFB86C;
+    --warning-color-rgb: 255, 184, 108;
+    --info-color: #8BE9FD;
+    --info-color-rgb: 139, 233, 253;
+
+    
+    --font-family: 'Pretendard', sans-serif;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --shadow-sm: 0 4px 15px rgba(0,0,0,0.2);
+    --shadow-md: 0 8px 30px rgba(0,0,0,0.3);
+    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- 3. 기본 요소 스타일 리셋 및 설정 --- */
+* {
+    font-family: var(--font-family) !important;
+    letter-spacing: -0.4px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    color: var(--text-light);
+}
+
+/* 앱 전체 배경 및 애니메이션 */
+.stApp {
+    background-color: var(--bg-base);
+    background-image: radial-gradient(circle at 10% 10%, rgba(var(--primary-accent-rgb), 0.1) 0%, transparent 30%),
+                      radial-gradient(circle at 90% 80%, rgba(80, 150, 255, 0.1) 0%, transparent 30%);
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Streamlit 기본 컴포넌트 오버라이드 */
+.stAlert[data-testid="st.warning"] {
+    background-color: rgba(var(--warning-color-rgb), 0.1);
+    border-left: 4px solid var(--warning-color);
+}
+.stAlert[data-testid="st.error"] {
+    background-color: rgba(var(--danger-color-rgb), 0.1);
+    border-left: 4px solid var(--danger-color);
+}
+.stAlert[data-testid="st.info"] {
+    background-color: rgba(var(--info-color-rgb), 0.1);
+    border-left: 4px solid var(--info-color);
+}
+.stAlert[data-testid="st.success"] {
+    border-left: 4px solid var(--success-color);
+}
+[data-testid="stSpinner"] > div {
+    font-size: 0.9em;
+    color: var(--text-medium);
+}
+
+
+/* --- 4. 사이드바 스타일 --- */
+[data-testid="stSidebar"] {
+    background: rgba(var(--bg-surface), 0.8);
+    backdrop-filter: blur(10px);
+    border-right: 1px solid var(--border-color);
+    padding: 24px;
+}
+
+.sidebar-logo {
+    font-size: 1.6em;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 24px;
+    color: var(--text-light);
+    letter-spacing: 1px;
+}
+
+[data-testid="stSidebar"] hr {
+    background-color: var(--border-color);
+    margin: 24px 0;
+}
+
+[data-testid="stSidebar"] h5 {
+    font-size: 0.9em;
+    color: var(--text-medium) !important;
+    font-weight: 500;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+}
+
+.icon-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--primary-accent);
+    margin-right: 10px;
+}
+
+.info-item {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.9em; padding: 6px 4px;
+}
+.info-item .info-label { color: var(--text-medium); }
+.info-item .info-value { font-weight: 500; color: var(--text-light); background-color: var(--bg-element); padding: 3px 8px; border-radius: var(--radius-sm); }
+.info-item .info-value.error { color: var(--danger-color); background-color: transparent; }
+.sidebar-date { font-size: 0.8em; color: var(--text-dark); text-align: right; margin-top: -10px; margin-bottom: 12px; padding-right: 4px; }
+
+/* 사이드바 버튼들 */
+[data-testid="stSidebar"] .stButton button {
+    border-radius: var(--radius-md) !important;
+    transition: var(--transition);
+    font-weight: 500;
+}
+[data-testid="stSidebar"] .stButton button[kind="primary"] {
+    background-color: var(--primary-accent); color: var(--text-light); border: none; font-weight: bold;
+}
+[data-testid="stSidebar"] .stButton button[kind="primary"]:hover {
+    background-color: var(--text-light); color: var(--primary-accent); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(var(--primary-accent-rgb), 0.2);
+}
+[data-testid="stSidebar"] .stButton button[id*="clear_history"] {
+    background-color: transparent; color: var(--text-dark); font-size: 0.85em; border: none;
+}
+[data-testid="stSidebar"] .stButton button[id*="clear_history"]:hover {
+    color: var(--danger-color); background-color: rgba(var(--danger-color-rgb), 0.1);
+}
+[data-testid="stSidebar"] .stButton button[id*="history_"] {
+    background-color: var(--bg-element); color: var(--text-medium); border: 1px solid var(--border-color); text-align: left; padding: 12px 16px; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; height: auto !important;
+}
+[data-testid="stSidebar"] .stButton button[id*="history_"]:hover {
+    background-color: var(--bg-surface); border-color: var(--primary-accent); color: var(--text-light); transform: translateX(4px);
+}
+
+/* --- 5. 메인 컨텐츠 스타일 --- */
+.main-content { padding: 1rem 3rem; }
+.main-content h1 { font-size: 2.8em; font-weight: 800; }
+.main-content h2 { 
+    border-bottom: 1px solid var(--border-color); 
+    padding-bottom: 1rem; 
+    margin: 3rem 0 2rem 0;
+    font-size: 1.8em;
+    font-weight: 700;
+}
+.main-content h3 { 
+    color: var(--text-light);
+    font-size: 1.5em;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding: 0;
+    background: none;
+    border: none;
+}
+.main-content .st-emotion-cache-1h6xps4 { color: var(--text-medium) !important; }
+
+/* 분석 예시 카드 */
+.example-prompt-container .stButton>button {
+    border: 1px solid var(--border-color) !important; border-radius: var(--radius-lg) !important; padding: 24px !important;
+    background-color: var(--bg-surface) !important; color: var(--text-light) !important; font-weight: 600 !important;
+    height: 140px !important; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+    line-height: 1.5; transition: var(--transition); box-shadow: var(--shadow-sm);
+}
+.example-prompt-container .stButton>button:hover {
+    border-color: var(--primary-accent) !important; background-color: var(--bg-element) !important;
+    transform: translateY(-5px) !important; box-shadow: 0 8px 30px rgba(var(--primary-accent-rgb), 0.1);
+}
+
+/* 파이프라인 시작 헤더 */
+.pipeline-header {
+    font-size: 1em; font-weight: 500; padding: 1rem 1.5rem;
+    background: linear-gradient(90deg, var(--bg-surface), var(--bg-base));
+    border-left: 4px solid var(--primary-accent); border-radius: var(--radius-md);
+    margin: 3rem 0 2rem 0; color: var(--text-medium);
+}
+
+/* 워크플로우 진행률 바 */
+.progress-bar {
+    border: 1px solid var(--border-color); background-color: var(--bg-surface);
+    justify-content: flex-start; gap: 0; padding: 0; margin-bottom: 2rem;
+    border-radius: var(--radius-md); overflow: hidden; display: flex;
+}
+.progress-item {
+    font-size: 0.85em; padding: 10px 16px; border-radius: 0;
+    border-right: 1px solid var(--border-color); margin-right: 0;
+    white-space: nowrap; transition: var(--transition);
+}
+.progress-item:last-child { border-right: none; }
+.progress-item.done { color: var(--text-medium); }
+.progress-item.working { color: var(--text-light); font-weight: 600; background-color: var(--primary-accent); }
+.progress-item.pending { color: var(--text-dark); }
+
+
+/* 각 분석 단계 컨테이너 */
+.step-content-card {
+    background: linear-gradient(145deg, var(--bg-surface), var(--bg-element));
+    border: 1px solid var(--border-color); border-radius: var(--radius-lg);
+    padding: 2rem; margin-bottom: 1rem; transition: var(--transition);
+}
+.step-content-card:hover {
+    box-shadow: 0 0 25px rgba(var(--primary-accent-rgb), 0.1);
+    border-color: rgba(var(--primary-accent-rgb), 0.5);
+}
+.step-content-card h5 { 
+    text-align: center; color: var(--text-medium); font-weight: 500;
+    margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color);
+}
+hr.step-divider { background-color: transparent; margin: 2rem 0; border-top: 1px dashed var(--border-color); }
+
+/* --- 6. 컴포넌트별 상세 스타일 --- */
+
+/* 리서치 브리핑 카드 */
+.briefing-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: linear-gradient(145deg, var(--bg-surface), var(--bg-element));
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    margin-bottom: 3rem;
+}
+.briefing-section {
+    background-color: var(--bg-element);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    transition: var(--transition);
+}
+.briefing-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.briefing-header h4 {
+    margin: 0;
+    font-size: 1.1em;
+}
+.briefing-icon {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    margin-right: 1rem;
+    background-color: rgba(var(--primary-accent-rgb), 0.1);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: 60%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.briefing-icon.summary { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236C5FF5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/%3E%3C/svg%3E"); }
+.briefing-icon.trends { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236C5FF5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='23 6 13.5 15.5 8.5 10.5 1 18'/%3E%3Cpolyline points='17 6 23 6 23 12'/%3E%3C/svg%3E"); }
+.briefing-icon.competitors { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236C5FF5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12.22 2h-4.44a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8.34'/%3E%3Cpath d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'/%3E%3C/svg%3E"); }
+.briefing-icon.audience { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236C5FF5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='9' cy='7' r='4'/%3E%3Cpath d='M23 21v-2a4 4 0 0 0-3-3.87'/%3E%3Cpath d='M16 3.13a4 4 0 0 1 0 7.75'/%3E%3C/svg%3E"); }
+.briefing-icon.tech { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236C5FF5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='16 18 22 12 16 6'/%3E%3Cpolyline points='8 6 2 12 8 18'/%3E%3C/svg%3E"); }
+.briefing-icon.stats { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236C5FF5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20v-6M6 20v-10M18 20V4'/%3E%3C/svg%3E"); }
+.briefing-content {
+    font-size: 0.9em;
+    color: var(--text-medium);
+    line-height: 1.7;
+}
+
+/* 딥다이브 Expander */
+.stExpander {
+    margin-top: 1rem; border: 1px solid var(--border-color) !important;
+    border-radius: var(--radius-md) !important; background-color: transparent !important;
+    transition: var(--transition);
+}
+.stExpander:hover { border-color: rgba(var(--primary-accent-rgb), 0.5) !important; }
+.stExpander header {
+    font-weight: 500 !important; color: var(--text-medium) !important;
+    padding-top: 12px !important; padding-bottom: 12px !important;
+    transition: var(--transition);
+}
+.stExpander header:hover { color: var(--primary-accent) !important; }
+.stExpander .st-emotion-cache-1h6xps4 p {
+    font-size: 0.9em;
+}
+
+/* 페르소나 카드 */
+.persona-card {
+    background-color: var(--bg-element); border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg); padding: 24px; height: 100%;
+    transition: var(--transition);
+}
+.persona-card:hover {
+    transform: translateY(-5px); border-color: var(--primary-accent);
+    box-shadow: 0 8px 30px rgba(var(--primary-accent-rgb), 0.1);
+}
+.persona-card .persona-icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 16px;
+    background-color: var(--bg-surface);
+    border-radius: 50%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236C5FF5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
+    background-size: 20px;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.persona-card h4 { font-size: 1.2em; color: var(--text-light); margin-bottom: 4px; }
+.persona-card .persona-info { font-size: 0.9em; color: var(--text-medium); margin-bottom: 16px; }
+.persona-card .persona-divider { border: none; height: 1px; background-color: var(--border-color); margin: 16px 0; }
+.persona-card h5 { font-size: 0.9em; color: var(--text-medium); font-weight: 600; margin-bottom: 8px; }
+.persona-card p { font-size: 0.9em; color: var(--text-light); line-height: 1.6; }
+
+/* 타겟 & 메시지 카드 */
+.message-card-container {
+    display: flex; flex-direction: column; gap: 1rem;
+    border: 1px solid var(--border-color); border-radius: var(--radius-lg);
+    padding: 1.5rem; background-color: var(--bg-element); height: 100%;
+}
+.message-card-target, .message-card-slogan { padding: 1rem; }
+.message-card-target { border-bottom: 1px dashed var(--border-color); }
+.message-card-container h6 {
+    font-size: 0.8em; font-weight: 700; color: var(--text-dark);
+    letter-spacing: 1px; margin-bottom: 0.8rem; text-transform: uppercase;
+}
+.message-card-target p { font-size: 1em; color: var(--text-light); }
+.message-card-slogan p { font-size: 1.3em; color: var(--secondary-accent); font-weight: 600; text-align: center; }
+
+/* 콘텐츠 전략 카드 */
+.content-strategy-card {
+    background-color: var(--bg-element); border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg); height: 100%; display: flex;
+    flex-direction: column; transition: var(--transition);
+}
+.content-strategy-card:hover {
+    transform: translateY(-5px); border-color: var(--secondary-accent);
+}
+.content-card-header {
+    padding: 0.8rem 1.2rem; background-color: var(--bg-surface);
+    color: var(--secondary-accent); font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.content-card-body {
+    padding: 1.2rem; font-size: 0.9em; line-height: 1.6;
+    color: var(--text-medium); flex-grow: 1;
+}
+
+/* --- 7. 채팅 UI 개선 --- */
+[data-testid="stChatMessage"] { 
+    background-color: transparent; 
+    border: none;
+    padding: 0;
+    margin-bottom: 1rem;
+}
+[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] {
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-lg);
+    line-height: 1.6;
+}
+[data-testid="stChatMessage"]:has([data-testid-chat-role="assistant"]) [data-testid="stMarkdownContainer"] {
+    background-color: var(--bg-surface);
+}
+[data-testid="stChatMessage"]:has([data-testid-chat-role="user"]) [data-testid="stMarkdownContainer"] {
+    background-color: var(--primary-accent);
+    color: #ffffff;
+}
+
+/* 채팅 아바타 아이콘 재정의 */
+[data-testid="stChatMessage"] [data-testid="stAvatar"] svg {
+    display: none;
+}
+[data-testid="stChatMessage"] [data-testid="stAvatar"] {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 70%;
+    border-radius: var(--radius-sm);
+}
+[data-testid="stChatMessage"][data-testid-chat-role="assistant"] [data-testid="stAvatar"] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236C5FF5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 8V4H8'/%3E%3Crect x='4' y='12' width='16' height='8' rx='2'/%3E%3Cpath d='M2 14h2'/%3E%3Cpath d='M20 14h2'/%3E%3Cpath d='M15 12v-2a3 3 0 0 0-3-3H9M9 12a3 3 0 0 0-3 3v0'/%3E%3C/svg%3E");
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-surface);
+}
+[data-testid="stChatMessage"][data-testid-chat-role="user"] [data-testid="stAvatar"] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23EAEBF0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
+    background-color: var(--primary-accent);
+}
+
+/* 채팅 입력창 */
+[data-testid="stChatInput"] { background: transparent !important; }
+[data-testid="stChatInput"] form > div {
+    border: 1px solid var(--border-color) !important; border-radius: var(--radius-md) !important;
+    background-color: var(--bg-surface) !important;
+    transition: var(--transition);
+}
+[data-testid="stChatInput"] form > div:hover {
+    border-color: var(--primary-accent) !important;
+}
+[data-testid="stChatInput"] textarea { background: transparent !important; color: var(--text-light) !important; }
+[data-testid="stBottomBlockContainer"] { background-color: var(--bg-base) !important; }
+
+/* 기타 UI 요소 정리 */
+#MainMenu, footer, header { visibility: hidden; }
