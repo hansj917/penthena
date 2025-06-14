@@ -592,3 +592,51 @@ textarea {
 [data-testid="stChatInput"] form button > div {
   background-color: var(--bg-surface) !important;
 }
+
+/* ────────────────────────────────────────────────────────
+   ▼ ▼ ▼ Bottom ChatInput 완전 통일(Windows 대응) ▼ ▼ ▼
+──────────────────────────────────────────────────────── */
+
+/* 1) 하단 바 전체(Drag handle 포함) 배경을 어두운 bg-base 로 */
+[data-testid="stBottomBlockContainer"] {
+  background-color: var(--bg-base) !important;
+  border-top: 1px solid var(--border-color) !important;
+}
+
+/* 2) ChatInput 래퍼(외곽) 배경도 bg-base 로 */
+[data-testid="stChatInput"] {
+  background-color: var(--bg-base) !important;
+}
+
+/* 3) 입력 폼 컨테이너(테두리 없는 박스) 배경을 bg-element 로 */
+[data-testid="stChatInput"] form > div {
+  background-color: var(--bg-element) !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+/* 4) textarea(입력창) 자체도 bg-element + 흰 글씨 */
+[data-testid="stChatInput"] textarea {
+  background-color: var(--bg-element) !important;
+  color: var(--text-light)    !important;
+  caret-color: var(--text-light) !important;
+  outline: none !important;
+}
+
+/* 5) placeholder(안내문구) 색상 보정 */
+[data-testid="stChatInput"] textarea::placeholder {
+  color: rgba(255,255,255,0.6) !important;
+}
+
+/* 6) 전송 버튼(화살표) 배경 & 아이콘 색상 통일 */
+[data-testid="stChatInput"] form button,
+[data-testid="stChatInput"] form button > div {
+  background-color: var(--bg-element) !important;
+  border: none !important;
+}
+[data-testid="stChatInput"] form button svg {
+  stroke: var(--text-light) !important;
+  fill: none                 !important;
+}
+
+/* ──────────────────────────────────────────────────────── */
