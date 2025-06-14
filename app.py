@@ -350,45 +350,87 @@ def get_deep_dive_analysis(topic: str, step_title: str, ai_response: str) -> str
 
 def perform_web_research_and_synthesis(topic: str) -> str:
     st.markdown("<h3>실시간 웹 리서치</h3>", unsafe_allow_html=True)
+
+    # ─── 서울 타임존 기준 현재 연도를 계산 ─────────────────────────────
+    current_year = datetime.now(pytz.timezone("Asia/Seoul")).year
+
     with st.spinner("리서치 전략 수립 및 검색 쿼리 생성 중..."):
-        query_gen_prompt = f'주제 "{topic}"에 대한 심층 분석을 위해, 시장 크기, 경쟁사, 최신 기술, 타겟 고객 관점의 효과적인 웹 검색 쿼리 4개를 JSON 리스트 형식으로 생성해줘. 다른 설명은 제외해줘.'
+        query_gen_prompt = (
+            f'주제 "{topic}"에 대한 심층 분석을 위해, 시장 크기, 경쟁사, 최신 기술, '
+            f'타겟 고객 관점의 효과적인 웹 검색 쿼리 4개를 JSON 리스트 형식으로 생성해줘. '
+            f'각 쿼리에 반드시 "{current_year}년"을 포함해줘. 다른 설명은 제외해줘.'
+        )
         try:
-            response = openai.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": query_gen_prompt}], response_format={"type": "json_object"}, temperature=0)
+            response = openai.chat.completions.create(
+                model="gpt-4o",
+                messages=[{"role": "user", "content": query_gen_prompt}],
+                response_format={"type": "json_object"},
+                temperature=0
+            )
             search_queries = json.loads(response.choices[0].message.content).get("queries", [])
         except Exception as e:
-            st.error(f"검색 쿼리 생성 실패: {e}"); return ""
+            st.error(f"검색 쿼리 생성 실패: {e}")
+            return ""
+
     if not search_queries:
-        st.warning("분석에 필요한 검색 쿼리를 생성하지 못했습니다."); return ""
+        st.warning("분석에 필요한 검색 쿼리를 생성하지 못했습니다.")
+        return ""
+
     with st.container(border=True):
         st.markdown("##### 생성된 검색 쿼리")
         st.json(search_queries)
+
+    # ─── 웹 검색 실행 및 결과 수집 ─────────────────────────────────
     search_results_text = ""
     with st.spinner("4개의 웹 검색을 동시에 실행합니다... (성능 최적화)"):
         def search_task(query):
-            try: return tavily.search(query=query, search_depth="advanced")
-            except Exception: return None
+            try:
+                return tavily.search(query=query, search_depth="advanced")
+            except Exception:
+                return None
+
         with ThreadPoolExecutor(max_workers=4) as executor:
-            results = executor.map(search_task, search_queries)
-        for response in results:
-            if response:
-                for result in response['results']:
-                    search_results_text += f"제목: {result['title']}\nURL: {result['url']}\n내용: {result['content']}\n\n"
+            for result in executor.map(search_task, search_queries):
+                if result:
+                    for hit in result.get('results', []):
+                        search_results_text += (
+                            f"제목: {hit['title']}\n"
+                            f"URL: {hit['url']}\n"
+                            f"내용: {hit['content']}\n\n"
+                        )
+
     if not search_results_text:
-        st.error("웹 리서치 중 오류가 발생했거나, 검색 결과가 없습니다."); return ""
-    
-    synthesis_prompt = f'"{topic}"에 대한 다음 웹 리서치 결과를 바탕으로, 다음 각 항목에 대해 분석하고, 반드시 "- *항목명*" 형식으로 시작하여 구조화된 "{datetime.now().year}년 기준 초기 리서치 브리핑"을 작성해줘: 핵심 요약, 시장 동향, 주요 경쟁사, 주요 타겟 고객, 핵심 기술, 주요 통계'
+        st.error("웹 리서치 중 오류가 발생했거나, 검색 결과가 없습니다.")
+        return ""
+
+    # ─── AI 종합 브리핑 생성 ─────────────────────────────────────────
+    synthesis_prompt = (
+        f'"{topic}"에 대한 다음 웹 리서치 결과를 바탕으로, '
+        f'다음 각 항목에 대해 분석하고, 반드시 "- *항목명*" 형식으로 시작하여 '
+        f'구조화된 "{current_year}년 기준 초기 리서치 브리핑"을 작성해줘: '
+        f'핵심 요약, 시장 동향, 주요 경쟁사, 주요 타겟 고객, 핵심 기술, 주요 통계'
+    )
+
     try:
         st.success("웹 리서치 완료! AI가 결과를 종합하여 브리핑을 실시간으로 생성합니다...")
         response_placeholder = st.empty()
+
         def stream_generator():
-            stream = openai.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": synthesis_prompt}], stream=True)
+            stream = openai.chat.completions.create(
+                model="gpt-4o",
+                messages=[{"role": "user", "content": synthesis_prompt}],
+                stream=True
+            )
             for chunk in stream:
-                content = chunk.choices[0].delta.content
-                if content: yield content
+                yield chunk.choices[0].delta.content or ""
+
         full_context = "".join(response_placeholder.write_stream(stream_generator()))
         return full_context
+
     except Exception as e:
-        st.error(f"리서치 종합 실패: {e}"); return ""
+        st.error(f"리서치 종합 실패: {e}")
+        return ""
+
 
 def display_research_briefing(context: str):
     st.markdown("<h3>AI 리서치 브리핑 (재구성)</h3>", unsafe_allow_html=True)
