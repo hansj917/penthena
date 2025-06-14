@@ -640,3 +640,40 @@ textarea {
 }
 
 /* ──────────────────────────────────────────────────────── */
+/* ────────────────────────────────────────────────────────
+   상단 예시 프롬프트 버튼 다크 모드 배경
+──────────────────────────────────────────────────────── */
+.example-prompt-container .stButton > button {
+  background-color: var(--bg-element) !important;  /* 기존 밝은 흰색 대신 어두운 표면 색 */
+  color:            var(--text-light)   !important;
+}
+.example-prompt-container .stButton > button:hover {
+  background-color: var(--bg-surface) !important; /* 호버 시 살짝 더 어두운 색으로 */
+}
+
+/* ────────────────────────────────────────────────────────
+   “AI 기반 차세대 WAF 솔루션 사업 계획” 텍스트 입력창 다크 모드 배경
+──────────────────────────────────────────────────────── */
+[data-testid="stTextInput"] input {
+  background-color: var(--bg-element) !important;  /* 어두운 입력창 배경 */
+  color:            var(--text-light)   !important; /* 입력 텍스트 흰색 */
+}
+[data-testid="stTextInput"] input::placeholder {
+  color: rgba(255,255,255,0.6) !important;         /* 플레이스홀더 반투명 흰색 */
+}
+
+/* ────────────────────────────────────────────────────────
+   (혹시 ChatInput 사용 시)
+   채팅 입력창 상단도 동일하게 다크 배경 적용
+──────────────────────────────────────────────────────── */
+[data-testid="stChatInput"] form > div {
+  background-color: var(--bg-element) !important;
+  border: 1px solid var(--border-color) !important;
+}
+[data-testid="stChatInput"] textarea {
+  background-color: var(--bg-element) !important;
+  color:            var(--text-light)   !important;
+}
+[data-testid="stChatInput"] textarea::placeholder {
+  color: rgba(255,255,255,0.6) !important;
+}
