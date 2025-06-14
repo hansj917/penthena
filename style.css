@@ -478,25 +478,3 @@ body, .stApp, .main-content,
   background: transparent !important;
 }
 
-/* ================================================================
-   Expander 내부 '원본 답변 보기' 다크 테마 적용
-   ============================================================== */
-
-/* 확장 패널 내부 마크다운 컨테이너 전체 배경/글자색 변경 */
-[data-testid="stExpander"] [data-testid="stExpanderDetails"] [data-testid="stMarkdownContainer"] {
-  background-color: var(--bg-element) !important;
-  color: var(--text-light) !important;
-}
-
-/* 코드 블록(프리포맷 텍스트)도 다크 배경으로 */
-[data-testid="stExpander"] pre,
-[data-testid="stExpander"] code {
-  background-color: var(--bg-element) !important;
-  color: var(--text-light) !important;
-  border: none !important;
-}
-
-/* 혹시 남아있는 흰 테두리 제거 */
-[data-testid="stExpander"] [data-testid="stExpanderDetails"] {
-  border-color: var(--border-color) !important;
-}
