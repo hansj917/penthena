@@ -14,9 +14,9 @@
     --primary-accent: #6C5FF5; 
     --primary-accent-rgb: 108, 95, 245;
     --secondary-accent: #78C4D3; 
-    
-    --text-light: #EAEBF0;    
-    --text-medium: #A0A0B8;   
+
+    --text-light: #FFFFFF;    /* Windows 호환성을 위해 완전한 흰색으로 변경 */
+    --text-medium: #A8A8B5;   /* 흰색과 대비를 위해 미세 조정 */
     --text-dark: #606070;
     
     --bg-base: #0A0A0F;       
