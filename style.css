@@ -490,3 +490,27 @@ body,
 [data-testid="stExpander"] > header {
   color: #FFFFFF !important;
 }
+
+/* 1) 파이프라인 단계(step) 제목 */
+.step-content-card h5 {
+  color: var(--text-light) !important;
+}
+
+/* 2) AI 리서치 브리핑 카드(sub-section) 제목 */
+.briefing-header h4 {
+  color: var(--text-light) !important;
+}
+
+/* 3) Expander(“AI 리서치 브리핑 (재구성)” 등) 버튼 헤더 */
+[data-testid="stExpanderHeader"],
+.stExpanderHeader,
+button[aria-expanded] > div > span {
+  color: var(--text-light) !important;
+}
+
+/* 4) Streamlit 마크다운 컨테이너 내부 하위 헤딩 */
+[data-testid="stMarkdownContainer"] h2,
+[data-testid="stMarkdownContainer"] h3,
+[data-testid="stMarkdownContainer"] h4 {
+  color: var(--text-light) !important;
+}
