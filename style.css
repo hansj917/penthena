@@ -435,3 +435,21 @@ body, .stApp, .main-content,
 .pipeline-header {
     color: var(--text-light) !important;
 }
+
+/* ================================================================
+   Windows 호환: ‘삭제’ 버튼과 채팅 입력창 주변 남은 흰색 제거
+   ============================================================== */
+
+/* 1. 사이드바 ‘삭제’ 버튼 완전 투명 처리 */
+[data-testid="stSidebar"] .stButton button[id*="clear_history"] {
+  background-color: transparent !important;
+  border: none !important;
+  color: var(--text-dark) !important;
+}
+
+/* 2. 채팅 입력창(프롬프트) 내부 모든 흰색 배경 제거 */
+[data-testid="stChatInput"] *,
+[data-testid="stChatInput"] form > div,
+[data-testid="stChatInput"] textarea {
+  background: transparent !important;
+}
