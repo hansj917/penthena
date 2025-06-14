@@ -623,13 +623,7 @@ def main():
 
     if 'messages' not in st.session_state: st.session_state.messages = []
     
-    if not st.session_state.messages:
-        st.markdown('<div class="example-prompt-container">', unsafe_allow_html=True)
-        if st.button("AI 기반 차세대 WAF 솔루션 사업 계획", use_container_width=True):
-            st.session_state.clear()
-            st.session_state.messages = [{"role": "user", "content": "AI 기능이 탑재된 차세대 WAF 솔루션 사업 계획서 작성"}]
-            st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
+   
 
     for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
