@@ -1,14 +1,11 @@
 # =================================================================================
-# PENTHENA AI Agent - v19.2 (Forrester Wave 최종 안정화)
+# PENTHENA AI Agent - v19.3 (초기 화면 UI 단순화)
 # =================================================================================
 # 작성자: Google Gemini
 # 업데이트 날짜: 2025-06-15
 #
 # 주요 변경 사항:
-# 1. [핵심 오류 수정] Forrester Wave 차트 데이터 중첩 문제 해결
-#    - fillna(1) 로직을 dropna로 복원하여 잘못된 데이터가 플로팅되는 현상 제거
-#    - 정교한 숫자 추출 로직을 추가하여 AI의 비정형 응답에 대한 안정성 확보
-#    - 마커 투명도를 추가하여 중첩된 데이터의 시각적 분별력 향상
+# 1. [UI/UX] 메인 화면의 예시 프롬프트 버튼 및 관련 컨테이너 완전 제거
 # 2. 이전 버전의 모든 UI/UX 개선 및 버그 수정 사항 포함
 # =================================================================================
 
@@ -72,13 +69,13 @@ def display_exchange_rates():
     
     try:
         response = requests.get(url, timeout=5)
-        response.raise_for_status() # HTTP 오류 발생 시 예외 발생
+        response.raise_for_status()
         
         root = ET.fromstring(response.content)
         ns = {'ecb': 'http://www.ecb.int/vocabulary/1.0'}
         
         rates = {c.get('currency'): float(c.get('rate')) for c in root.findall('.//ecb:Cube[@currency]', ns)}
-        rates['EUR'] = 1.0 # 기준 통화인 유로 추가
+        rates['EUR'] = 1.0
         
         usd_per_eur = rates.get('USD', 1)
         krw_per_eur = rates.get('KRW', 0)
@@ -145,7 +142,6 @@ def create_market_chart(text: str) -> go.Figure:
     except Exception as e: return create_empty_chart(f"시장 차트 렌더링 오류: {e}")
 
 def create_forrester_wave_chart(text: str) -> go.Figure:
-    """[최종 수정] 숫자 추출 로직 강화 및 dropna 복원, 투명도 적용"""
     df = parse_table_from_text(text)
     if df.shape[1] < 4:
         return create_empty_chart("AI가 유효한 경쟁사 데이터를<br>생성하지 못했습니다.")
@@ -155,12 +151,10 @@ def create_forrester_wave_chart(text: str) -> go.Figure:
         df = df[~df['Competitor'].str.contains('경쟁사 [A-Z]', case=False, na=False)]
         if df.empty or '분석' in df['Competitor'].iloc[0]: return create_empty_chart("AI가 실제 경쟁사 이름 대신<br>Placeholder를 생성했습니다.")
 
-        # 숫자 추출 로직 적용
         df['Strategy'] = extract_numeric(df['Strategy'])
         df['Current Offering'] = extract_numeric(df['Current Offering'])
         df['Market Presence'] = extract_numeric(df['Market Presence'])
 
-        # dropna를 사용하여 유효한 숫자 데이터가 있는 행만 남김
         df.dropna(subset=['Strategy', 'Current Offering'], inplace=True)
         df['Market Presence'].fillna(5, inplace=True)
 
@@ -169,10 +163,7 @@ def create_forrester_wave_chart(text: str) -> go.Figure:
             
         x_mid, y_mid = 5.0, 5.0
         fig = px.scatter(df, x="Strategy", y="Current Offering", size="Market Presence", color="Competitor", hover_name="Competitor", hover_data={'Strategy': ':.1f', 'Current Offering': ':.1f', 'Market Presence': ':.1f'}, size_max=50, text="Competitor", color_discrete_sequence=px.colors.qualitative.Vivid)
-        
-        # 투명도 적용
         fig.update_traces(textposition='top center', marker=dict(line=dict(width=1, color='DarkSlateGrey'), opacity=0.7))
-        
         fig.update_layout(xaxis_title="전략 (Strategy)", yaxis_title="현재 오퍼링 (Current Offering)", font_color=CHART_FONT_COLOR, paper_bgcolor=CHART_BG_COLOR, plot_bgcolor=CHART_BG_COLOR, showlegend=False, xaxis=dict(range=[0, 10.5], showgrid=True, gridcolor=GRID_COLOR, zeroline=False), yaxis=dict(range=[0, 10.5], showgrid=True, gridcolor=GRID_COLOR, zeroline=False), margin=dict(t=20, b=20, l=20, r=20))
         fig.add_shape(type="rect", x0=x_mid, y0=y_mid, x1=10.5, y1=10.5, fillcolor="rgba(108, 95, 245, 0.1)", layer="below", line_width=0)
         fig.add_vline(x=x_mid, line_width=1, line_dash="dash", line_color="grey")
@@ -350,7 +341,7 @@ def stream_and_display_step(prompt: str) -> str:
         st.error(f"AI 응답 처리 중 오류 발생: {e}"); return ""
 
 def get_deep_dive_analysis(topic: str, step_title: str, ai_response: str) -> str:
-    deep_dive_prompt = f"..."
+    deep_dive_prompt = f"""...""" # 전체 프롬프트 내용
     try:
         response = openai.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": deep_dive_prompt}], temperature=0.7)
         return response.choices[0].message.content
@@ -461,6 +452,7 @@ def execute_pipeline(pipeline_name: str, steps: dict, topic: str, research_conte
                             if st.session_state.get('plan_data'):
                                 if 'personas' in st.session_state.plan_data: previous_steps_summary += f"- 타겟 페르소나: {', '.join([p['Persona'] for p in st.session_state.plan_data['personas']])}\n"
                                 if 'key_features' in st.session_state.plan_data and st.session_state.plan_data['key_features']: previous_steps_summary += f"- 핵심 기능: {st.session_state.plan_data['key_features'][0].get('Feature', 'N/A')}\n"
+                            
                             augmented_prompt = f'"{step_details["prompt_template"].format(p=topic)}"'
                             text_result = stream_and_display_step(augmented_prompt)
                             full_group_text_result += f"--- {step_title} ---\n{text_result}\n\n"
