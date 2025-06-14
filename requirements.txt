@@ -4,5 +4,5 @@ pandas
 plotly
 requests
 pytz
-tavily-client
+tavily-python  # <- 올바른 이름으로 수정
 python-dotenv
