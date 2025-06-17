@@ -1,1 +1,3 @@
-# PENTHENA AI Agent Project
+# PENTHENA Business Intelligence
+
+Agent Purpose Business Dashboard
