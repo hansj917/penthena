@@ -1,3 +1,3 @@
 # PENTHENA Business Intelligence
 
-Agent Purpose Business Dashboard
+Agent-based Business Dashboard
