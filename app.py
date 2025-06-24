@@ -633,20 +633,6 @@ def run_intelligent_agent(user_prompt):
 def main():
     st.set_page_config(page_title="PENTHENA AI Agent", layout="wide", initial_sidebar_state="expanded")
     load_css("style.css")
-
-/* style.css */
-.delete-button {
-  background-color: #6C5FF5;
-  color: #fff;
-  padding: .5rem 1rem;
-  border-radius: .375rem;
-  text-align: center;
-  cursor: pointer;
-  font-weight: bold;
-}
-.delete-button:hover {
-  background-color: #5a4ddb;
-}
     
     with st.sidebar:
         st.markdown('<div class="sidebar-logo">PENTHENA</div>', unsafe_allow_html=True)
@@ -661,10 +647,8 @@ def main():
         col1, col2 = st.columns([0.8, 0.2])
         with col1: st.markdown("<h5><span class='icon-dot'></span> 분석 기록</h5>", unsafe_allow_html=True)
         with col2:
-    st.markdown(
-        '<div class="delete-button">삭제</div>',
-        unsafe_allow_html=True
-    )
+   if st.button("삭제", use_container_width=True, key="clear_history"):
+                st.session_state.prompt_history = []; st.rerun()
         
         if 'prompt_history' not in st.session_state: st.session_state.prompt_history = []
         for i, prompt_text in enumerate(st.session_state.prompt_history[:5]):
