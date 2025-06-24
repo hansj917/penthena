@@ -634,23 +634,42 @@ def main():
     st.set_page_config(page_title="PENTHENA AI Agent", layout="wide", initial_sidebar_state="expanded")
     load_css("style.css")
 
-    # ── 커스텀 사이드바 스크롤바 & info-value pill 스타일 ──
+    # ── 커스텀 사이드바 스타일 ──
     st.markdown("""
     <style>
-      /* 사이드바 스크롤바 (기존 생략) … */
+      /* 1) 사이드바 폭 고정 */
+      [data-testid="stSidebar"] {
+        width: 260px !important;
+        min-width: 260px !important;
+        max-width: 260px !important;
+      }
+      /* 2) 드래그 바 클릭 방지 */
+      [data-testid="columnResizer"] {
+        pointer-events: none;
+      }
 
-      /* 시간·환율 박스(.info-value) */
-      .info-value {
-        display: inline-block;      /* width 적용을 위해 inline-block */
-        min-width: 70px;            /* “1,350 원” 기준으로 여유 있게 */
-        white-space: nowrap;        /* 줄바꿈 방지 */
-        text-align: center;         /* 가운데 정렬 */
-        background-color: #262730;  /* 사이드바 배경과 동일 */
-        color: #EAEBF0;             /* 기존 폰트 컬러 */
-        padding: 4px 8px;           /* 위아래/좌우 여백 */
+      /* 3) info-item: 레이블과 값 가로 정렬 및 간격 좁히기 */
+      .info-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 4px;
+      }
+      .info-item .info-label {
+        white-space: nowrap;
+        margin-right: 8px;
+        flex: 0 0 auto;
+      }
+      .info-item .info-value {
+        display: inline-block;
+        min-width: 50px;       /* 적당히 조정 */
+        white-space: nowrap;
+        text-align: center;
+        background-color: #262730;
+        color: #EAEBF0;
+        padding: 2px 6px;
         border-radius: 4px;
         font-weight: 500;
-        box-sizing: border-box;     /* padding 포함 너비 계산 */
       }
     </style>
     """, unsafe_allow_html=True)
