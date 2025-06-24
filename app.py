@@ -49,10 +49,10 @@ def display_world_clocks():
     st.markdown(f"<p class='sidebar-date'>{now_default.strftime('%Y년 %m월 %d일')}</p>", unsafe_allow_html=True)
     
     timezones = {
-        "서울": "Asia/Seoul", 
-        "뉴욕": "America/New_York", 
         "도쿄": "Asia/Tokyo", 
-        "호치민": "Asia/Ho_Chi_Minh"
+        "하노이": "Asia/Ho_Chi_Minh", 
+        "두바이": "Asia/Dubai", 
+        "시애틀": "America/Los_Angeles"
     }
     
     for city, tz in timezones.items():
