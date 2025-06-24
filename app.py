@@ -637,45 +637,44 @@ def main():
     # ── 커스텀 사이드바 스타일 ──
     st.markdown("""
     <style>
-      /* 1) 사이드바 폭 고정 */
+      /* 1) 사이드바 폭 고정 (원하는 너비로 조정) */
       [data-testid="stSidebar"] {
         width: 350px !important;
         min-width: 350px !important;
         max-width: 350px !important;
       }
-      /* 2) 드래그 바 클릭 방지 */
+      /* 2) 사이드바 드래그 핸들 비활성화 */
       [data-testid="columnResizer"] {
         pointer-events: none;
       }
 
-      /* 3) info-item: 레이블과 값 가로 정렬 및 간격 좁히기 */
+      /* 3) info-item 간격 좁히기 */
       .info-item {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 4px;
+        margin-bottom: 4px;      /* 아래 아이템과 세로 간격 */
       }
       .info-item .info-label {
-        white-space: nowrap;
-        margin-right: 8px;
-        flex: 0 0 auto;
+        white-space: nowrap;      /* 레이블 줄바꿈 금지 */
+        margin-right: 6px;        /* 레이블→값 간 가로 간격 */
       }
       .info-item .info-value {
-        display: inline-block;
-        min-width: 50px;
-        white-space: nowrap;
-        text-align: center;
+        min-width: 40px;          /* 값 박스 최소 너비 */
+        padding: 2px 4px;         /* 안쪽 여백 */
         background-color: #262730;
         color: #EAEBF0;
-        padding: 2px 6px;
         border-radius: 4px;
+        text-align: center;
         font-weight: 500;
+        white-space: nowrap;      /* 숫자 줄바꿈 금지 */
       }
 
-      /* 4) 사이드바 버튼(예: 삭제) 텍스트 줄바꿈 방지 */
+      /* 4) 삭제 버튼 텍스트 줄바꿈 방지 & 최소 너비 */
       [data-testid="stSidebar"] .stButton > button {
         white-space: nowrap !important;
-        min-width: 60px;
+        min-width: 50px;          /* 버튼 최소 너비 */
+        padding: 4px 8px;         /* 버튼 안쪽 여백 */
       }
     </style>
     """, unsafe_allow_html=True)
