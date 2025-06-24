@@ -639,7 +639,7 @@ def main():
       #sidebarToggle {
         position: fixed;
         top: 12px;
-        left: 12px;
+        /* left: 12px;  초기값은 스크립트가 세팅 */
         width: 32px;
         height: 32px;
         background: rgba(255,255,255,0.1);
@@ -649,12 +649,12 @@ def main():
         justify-content: center;
         cursor: pointer;
         z-index: 1000;
+        transition: left 0.2s;
       }
       #sidebarToggle:hover { background: rgba(255,255,255,0.2); }
       #sidebarToggle svg { fill: #EAEBF0; width: 20px; height: 20px; }
     </style>
     <div id="sidebarToggle" title="Toggle sidebar">
-      <!-- 세 줄 햄버거 아이콘 -->
       <svg viewBox="0 0 100 80">
         <rect width="100" height="12"></rect>
         <rect y="30" width="100" height="12"></rect>
@@ -662,10 +662,30 @@ def main():
       </svg>
     </div>
     <script>
-      document.getElementById("sidebarToggle").onclick = () => {
-        const btn = document.querySelector('[data-testid="collapseSidebar"]');
-        if (btn) btn.click();
-      }
+      const toggle = document.getElementById("sidebarToggle");
+      const btn = () => document.querySelector('[data-testid="collapseSidebar"]');
+      const sidebar = () => document.querySelector('[data-testid="stSidebar"]');
+
+      // 클릭 시 접기/펼치기
+      toggle.onclick = () => btn()?.click();
+
+      // 사이드바 너비 변화를 감지해서 left 값을 조정
+      const obs = new MutationObserver(() => {
+        const sb = sidebar();
+        if (!sb) return;
+        const w = sb.getBoundingClientRect().width;
+        // 접힌 상태: 거의 0에 가깝다면 바깥 왼쪽 12px
+        if (w < 50) {
+          toggle.style.left = "12px";
+        } else {
+          // 펼쳐진 상태: 사이드바 오른쪽 안쪽 끝에서 약간 안쪽으로
+          toggle.style.left = (w - 32 - 12) + "px";
+        }
+      });
+      obs.observe(document.body, { attributes: true, subtree: true, attributeFilter: ["style", "class"] });
+
+      // 초기 위치 세팅
+      setTimeout(() => obs.takeRecords() || obs, 50);
     </script>
     """, unsafe_allow_html=True)
 
