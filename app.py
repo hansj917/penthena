@@ -633,23 +633,6 @@ def run_intelligent_agent(user_prompt):
 def main():
     st.set_page_config(page_title="PENTHENA AI Agent", layout="wide", initial_sidebar_state="expanded")
     load_css("style.css")
-
-# style.css 불러온 직후에 넣기
-st.markdown("""
-<style>
-/* 사이드바 버튼 배경 어둡게, 글씨 연하게 */
-.sidebar .stButton>button {
-    background-color: #282a36 !important;
-    color: #EAEBF0 !important;
-    border: none;
-}
-/* 호버 시 약간 밝아지게 */
-.sidebar .stButton>button:hover {
-    background-color: #3C3F58 !important;
-}
-</style>
-""", unsafe_allow_html=True)
-
     
     with st.sidebar:
         st.markdown('<div class="sidebar-logo">PENTHENA</div>', unsafe_allow_html=True)
