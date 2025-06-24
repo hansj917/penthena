@@ -640,8 +640,8 @@ def main():
       /* 1) 사이드바 폭 고정 */
       [data-testid="stSidebar"] {
         width: 350px !important;
-        min-width: 500px !important;
-        max-width: 500px !important;
+        min-width: 350px !important;
+        max-width: 350px !important;
       }
       /* 2) 드래그 바 클릭 방지 */
       [data-testid="columnResizer"] {
