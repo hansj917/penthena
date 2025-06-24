@@ -634,6 +634,32 @@ def main():
     st.set_page_config(page_title="PENTHENA AI Agent", layout="wide", initial_sidebar_state="expanded")
     load_css("style.css")
 
+    st.markdown("""
+    <style>
+      /* 1) JSON 위젯 배경 투명화 */
+      div[data-testid="stJson"] {
+        background-color: transparent !important;
+        border: none !important;
+      }
+    
+      /* 2) 스피너 / 성공 메시지 박스(스트림릿 상태 위젯) 배경 투명화 */
+      div[data-testid="stStatusWidget"] {
+        background-color: transparent !important;
+      }
+    
+      /* 3) 모든 <pre> 태그 (코드 블록) 배경 투명화 */
+      pre {
+        background-color: transparent !important;
+        border: none !important;
+      }
+    
+      /* 4) 확장(expander) 본문 중 또 흰 블록이 남아 있으면 대비용 */
+      section[data-testid="stExpander"] div[role="button"] + div > div {
+        background-color: transparent !important;
+      }
+    </style>
+    """, unsafe_allow_html=True)
+
     # ---  추가: 기본 흰색 배경 투명 처리  ---
     st.markdown("""
     <style>
