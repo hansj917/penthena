@@ -639,7 +639,7 @@ def main():
     <style>
       /* 1) 사이드바 폭 고정 */
       [data-testid="stSidebar"] {
-        width: 500px !important;
+        width: 350px !important;
         min-width: 500px !important;
         max-width: 500px !important;
       }
