@@ -637,32 +637,20 @@ def main():
     # ── 커스텀 사이드바 스크롤바 & info-value pill 스타일 ──
     st.markdown("""
     <style>
-      /* 사이드바 스크롤바 */
-      [data-testid="stSidebar"]::-webkit-scrollbar {
-        width: 6px;
-      }
-      [data-testid="stSidebar"]::-webkit-scrollbar-track {
-        background: #262730;
-      }
-      [data-testid="stSidebar"]::-webkit-scrollbar-thumb {
-        background-color: #6C5FF5;
-        border-radius: 4px;
-      }
-      [data-testid="stSidebar"]::-webkit-scrollbar-thumb:hover {
-        background-color: #889AF5;
-      }
-      [data-testid="stSidebar"] {
-        scrollbar-width: thin;
-        scrollbar-color: #6C5FF5 #262730;
-      }
+      /* 사이드바 스크롤바 (기존 생략) … */
 
       /* 시간·환율 박스(.info-value) */
       .info-value {
-        background-color: #262730;   /* 사이드바 배경과 동일 */
-        color: #EAEBF0;              /* 기존 폰트 컬러 */
-        padding: 2px 8px;
+        display: inline-block;      /* width 적용을 위해 inline-block */
+        min-width: 70px;            /* “1,350 원” 기준으로 여유 있게 */
+        white-space: nowrap;        /* 줄바꿈 방지 */
+        text-align: center;         /* 가운데 정렬 */
+        background-color: #262730;  /* 사이드바 배경과 동일 */
+        color: #EAEBF0;             /* 기존 폰트 컬러 */
+        padding: 4px 8px;           /* 위아래/좌우 여백 */
         border-radius: 4px;
         font-weight: 500;
+        box-sizing: border-box;     /* padding 포함 너비 계산 */
       }
     </style>
     """, unsafe_allow_html=True)
