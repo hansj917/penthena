@@ -685,7 +685,7 @@ def main():
             st.markdown("<h5><span class='icon-dot'></span> 분석 기록</h5>", unsafe_allow_html=True)
         with col2:
             # 정확히 8칸 들여쓰기(4 + 4)입니다
-            if st.button("삭제", use_container_width=True, key="clear_history"):
+            if st.button("삭제", use_container_width=True, key="clear_history", type="primary"):
                 st.session_state.prompt_history = []
                 st.rerun()
         # ────────────────────────────
@@ -693,7 +693,7 @@ def main():
         if 'prompt_history' not in st.session_state:
             st.session_state.prompt_history = []
         for i, prompt_text in enumerate(st.session_state.prompt_history[:5]):
-            if st.button(prompt_text, key=f"history_{i}", use_container_width=True):
+            if st.button(prompt_text, key=f"history_{i}", use_container_width=True, type="secondary"):
                 st.session_state.clear()
                 st.session_state.messages = [{"role": "user", "content": prompt_text}]
                 st.rerun()
