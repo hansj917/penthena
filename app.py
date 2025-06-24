@@ -63,31 +63,52 @@ def display_world_clocks():
             st.markdown(f"""<div class="info-item"><span class="info-label">{city}</span><span class="info-value error">로드 실패</span></div>""", unsafe_allow_html=True)
 
 def display_exchange_rates():
-    """주요 통화 환율 정보를 표시하는 사이드바 컴포넌트"""
+    """주요 통화 환율 정보를 exchangerate.host API로 표시하는 사이드바 컴포넌트"""
     st.markdown("<h5><span class='icon-dot'></span> 환율 정보</h5>", unsafe_allow_html=True)
-    url = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"
-    
+    # exchangerate.host 무료 엔드포인트 (API 키 필요 없음)
+    url = "https://api.exchangerate.host/latest"
+
     try:
-        response = requests.get(url, timeout=5)
-        response.raise_for_status()
-        
-        root = ET.fromstring(response.content)
-        ns = {'ecb': 'http://www.ecb.int/vocabulary/1.0'}
-        
-        rates = {c.get('currency'): float(c.get('rate')) for c in root.findall('.//ecb:Cube[@currency]', ns)}
-        rates['EUR'] = 1.0
-        
-        usd_per_eur = rates.get('USD', 1)
-        krw_per_eur = rates.get('KRW', 0)
-        jpy_per_eur = rates.get('JPY', 1)
+        resp = requests.get(url, timeout=5)
+        resp.raise_for_status()
+        data = resp.json().get("rates", {})
 
-        usd_krw_rate = krw_per_eur / usd_per_eur
-        jpy_krw_rate = (krw_per_eur / jpy_per_eur) * 100
+        # API에서 EUR 기준 비율로 내려오므로
+        # USD, JPY, KRW 비율을 직접 가져와 KRW 환산
+        eur_to_krw = data.get("KRW")
+        eur_to_usd = data.get("USD")
+        eur_to_jpy = data.get("JPY")
 
-        st.markdown(f"""<div class="info-item"><span class="info-label">USD (1달러)</span><span class="info-value">{usd_krw_rate:,.2f} 원</span></div>""", unsafe_allow_html=True)
-        st.markdown(f"""<div class="info-item"><span class="info-label">JPY (100엔)</span><span class="info-value">{jpy_krw_rate * 100:,.2f} 원</span></div>""", unsafe_allow_html=True)
-    except Exception: 
-        st.markdown("""<div class="info-item"><span class="info-label">환율 정보</span><span class="info-value error">로드 실패</span></div>""", unsafe_allow_html=True)
+        # 1 USD 당 KRW 환율
+        usd_krw = eur_to_krw / eur_to_usd if eur_to_usd else None
+        # 1 JPY 당 KRW 환율
+        jpy_krw = eur_to_krw / eur_to_jpy if eur_to_jpy else None
+
+        if usd_krw is not None:
+            st.markdown(
+                f"""<div class="info-item">
+                      <span class="info-label">USD (1달러)</span>
+                      <span class="info-value">{usd_krw:,.2f} 원</span>
+                   </div>""",
+                unsafe_allow_html=True
+            )
+        if jpy_krw is not None:
+            st.markdown(
+                f"""<div class="info-item">
+                      <span class="info-label">JPY (100엔)</span>
+                      <span class="info-value">{jpy_krw:,.2f} 원</span>
+                   </div>""",
+                unsafe_allow_html=True
+            )
+    except Exception:
+        st.markdown(
+            """<div class="info-item">
+                  <span class="info-label">환율 정보</span>
+                  <span class="info-value error">로드 실패</span>
+               </div>""",
+            unsafe_allow_html=True
+        )
+
 
 # --- 4. 데이터 파싱 및 시각화 컴포넌트 ---
 
