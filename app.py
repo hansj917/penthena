@@ -634,6 +634,42 @@ def main():
     st.set_page_config(page_title="PENTHENA AI Agent", layout="wide", initial_sidebar_state="expanded")
     load_css("style.css")
 
+# ── 사이드바 토글 햄버거 아이콘 추가 ──
+st.markdown("""
+<style>
+  #sidebarToggle {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    width: 32px;
+    height: 32px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+  }
+  #sidebarToggle:hover { background: rgba(255,255,255,0.2); }
+  #sidebarToggle svg { fill: #EAEBF0; width: 20px; height: 20px; }
+</style>
+<div id="sidebarToggle" title="Toggle sidebar">
+  <!-- 세 줄 햄버거 아이콘 -->
+  <svg viewBox="0 0 100 80">
+    <rect width="100" height="12"></rect>
+    <rect y="30" width="100" height="12"></rect>
+    <rect y="60" width="100" height="12"></rect>
+  </svg>
+</div>
+<script>
+  document.getElementById("sidebarToggle").onclick = () => {
+    const btn = document.querySelector('[data-testid="collapseSidebar"]');
+    if (btn) btn.click();
+  }
+</script>
+""", unsafe_allow_html=True)
+
     # ── 커스텀 사이드바 스타일 ──
     st.markdown("""
     <style>
