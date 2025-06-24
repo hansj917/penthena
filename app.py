@@ -662,7 +662,7 @@ def main():
       }
       .info-item .info-value {
         display: inline-block;
-        min-width: 50px;       /* 적당히 조정 */
+        min-width: 50px;
         white-space: nowrap;
         text-align: center;
         background-color: #262730;
@@ -670,6 +670,12 @@ def main():
         padding: 2px 6px;
         border-radius: 4px;
         font-weight: 500;
+      }
+
+      /* 4) 사이드바 버튼(예: 삭제) 텍스트 줄바꿈 방지 */
+      [data-testid="stSidebar"] .stButton > button {
+        white-space: nowrap !important;
+        min-width: 60px;
       }
     </style>
     """, unsafe_allow_html=True)
