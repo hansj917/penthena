@@ -637,34 +637,32 @@ def main():
     # ── 커스텀 사이드바 스타일 ──
     st.markdown("""
     <style>
-      /* 1) 사이드바 폭 고정 */
+      /* 1) 사이드바 폭 고정 (조금 더 넓게) */
       [data-testid="stSidebar"] {
-        width: 260px !important;
-        min-width: 260px !important;
-        max-width: 260px !important;
+        width: 280px !important;
+        min-width: 280px !important;
+        max-width: 280px !important;
       }
-      /* 2) 드래그 바 클릭 방지 */
+      /* 2) 리사이저 클릭 방지 */
       [data-testid="columnResizer"] {
         pointer-events: none;
       }
 
-      /* 3) info-item: 레이블과 값 가로 정렬 및 간격 좁히기 */
+      /* 3) info-item: 레이블과 값(pill)을 왼쪽 정렬, gap으로 간격 조정 */
       .info-item {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: flex-start;  /* ← space-between 대신 flex-start */
+        gap: 8px;                     /* ← 두 요소 사이 간격 고정 */
         margin-bottom: 4px;
       }
       .info-item .info-label {
         white-space: nowrap;
-        margin-right: 8px;
         flex: 0 0 auto;
       }
       .info-item .info-value {
         display: inline-block;
-        min-width: 50px;
         white-space: nowrap;
-        text-align: center;
         background-color: #262730;
         color: #EAEBF0;
         padding: 2px 6px;
@@ -672,7 +670,7 @@ def main():
         font-weight: 500;
       }
 
-      /* 4) 사이드바 버튼(예: 삭제) 텍스트 줄바꿈 방지 */
+      /* 4) 사이드바 버튼(삭제 등) 줄바꿈 방지 & 최소너비 확보 */
       [data-testid="stSidebar"] .stButton > button {
         white-space: nowrap !important;
         min-width: 60px;
