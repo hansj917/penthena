@@ -639,9 +639,9 @@ def main():
     <style>
       /* 1) 사이드바 폭 고정 (원하는 너비로 조정) */
       [data-testid="stSidebar"] {
-        width: 300px !important;
-        min-width: 300px !important;
-        max-width: 300px !important;
+        width: 320px !important;
+        min-width: 320px !important;
+        max-width: 320px !important;
       }
       /* 2) 사이드바 드래그 핸들 비활성화 */
       [data-testid="columnResizer"] {
