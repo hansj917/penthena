@@ -45,8 +45,8 @@ GRID_COLOR = "rgba(255, 255, 255, 0.1)"
 def display_world_clocks():
     """세계 주요 도시의 현재 시간을 표시하는 사이드바 컴포넌트"""
     st.markdown("<h5><span class='icon-dot'></span> 세계 시간</h5>", unsafe_allow_html=True)
-    now_korea = datetime.now(pytz.timezone("Asia/Seoul"))
-    st.markdown(f"<p class='sidebar-date'>{now_korea.strftime('%Y년 %m월 %d일')}</p>", unsafe_allow_html=True)
+    now_default = datetime.now(pytz.timezone("Asia/Tokyo"))
+    st.markdown(f"<p class='sidebar-date'>{now_default.strftime('%Y년 %m월 %d일')}</p>", unsafe_allow_html=True)
     
     timezones = {
         "서울": "Asia/Seoul", 
