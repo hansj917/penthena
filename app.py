@@ -633,24 +633,32 @@ def run_intelligent_agent(user_prompt):
 def main():
     st.set_page_config(page_title="PENTHENA AI Agent", layout="wide", initial_sidebar_state="expanded")
     load_css("style.css")
-    
+
     with st.sidebar:
         st.markdown('<div class="sidebar-logo">PENTHENA</div>', unsafe_allow_html=True)
         if st.button("새 분석 시작", use_container_width=True, type="primary", key="new_analysis_sidebar"):
-            st.session_state.clear(); st.rerun()
+            st.session_state.clear()
+            st.rerun()
+
         st.divider()
         display_world_clocks()
         st.divider()
         display_exchange_rates()
         st.divider()
-        
+
+        # ── 분석 기록 + 삭제 버튼 ──
         col1, col2 = st.columns([0.8, 0.2])
-        with col1: st.markdown("<h5><span class='icon-dot'></span> 분석 기록</h5>", unsafe_allow_html=True)
+        with col1:
+            st.markdown("<h5><span class='icon-dot'></span> 분석 기록</h5>", unsafe_allow_html=True)
         with col2:
-   if st.button("삭제", use_container_width=True, key="clear_history"):
-                st.session_state.prompt_history = []; st.rerun()
-        
-        if 'prompt_history' not in st.session_state: st.session_state.prompt_history = []
+            # 정확히 8칸 들여쓰기(4 + 4)입니다
+            if st.button("삭제", use_container_width=True, key="clear_history"):
+                st.session_state.prompt_history = []
+                st.rerun()
+        # ────────────────────────────
+
+        if 'prompt_history' not in st.session_state:
+            st.session_state.prompt_history = []
         for i, prompt_text in enumerate(st.session_state.prompt_history[:5]):
             if st.button(prompt_text, key=f"history_{i}", use_container_width=True):
                 st.session_state.clear()
