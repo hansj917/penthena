@@ -634,38 +634,38 @@ def main():
     st.set_page_config(page_title="PENTHENA AI Agent", layout="wide", initial_sidebar_state="expanded")
     load_css("style.css")
 
-+    # ── 커스텀 사이드바 스크롤바 & info-value pill 스타일 ──
-+    st.markdown("""
-+    <style>
-+      /* 사이드바 스크롤바 */
-+      [data-testid="stSidebar"]::-webkit-scrollbar {
-+        width: 6px;
-+      }
-+      [data-testid="stSidebar"]::-webkit-scrollbar-track {
-+        background: #262730;
-+      }
-+      [data-testid="stSidebar"]::-webkit-scrollbar-thumb {
-+        background-color: #6C5FF5;
-+        border-radius: 4px;
-+      }
-+      [data-testid="stSidebar"]::-webkit-scrollbar-thumb:hover {
-+        background-color: #889AF5;
-+      }
-+      [data-testid="stSidebar"] {
-+        scrollbar-width: thin;
-+        scrollbar-color: #6C5FF5 #262730;
-+      }
-+
-+      /* 시간·환율 박스(.info-value) */
-+      .info-value {
-+        background-color: #262730;   /* 사이드바 배경과 동일 */
-+        color: #EAEBF0;              /* 기존 폰트 컬러 */
-+        padding: 2px 8px;
-+        border-radius: 4px;
-+        font-weight: 500;
-+      }
-+    </style>
-+    """, unsafe_allow_html=True)
+    # ── 커스텀 사이드바 스크롤바 & info-value pill 스타일 ──
+    st.markdown("""
+    <style>
+      /* 사이드바 스크롤바 */
+      [data-testid="stSidebar"]::-webkit-scrollbar {
+        width: 6px;
+      }
+      [data-testid="stSidebar"]::-webkit-scrollbar-track {
+        background: #262730;
+      }
+      [data-testid="stSidebar"]::-webkit-scrollbar-thumb {
+        background-color: #6C5FF5;
+        border-radius: 4px;
+      }
+      [data-testid="stSidebar"]::-webkit-scrollbar-thumb:hover {
+        background-color: #889AF5;
+      }
+      [data-testid="stSidebar"] {
+        scrollbar-width: thin;
+        scrollbar-color: #6C5FF5 #262730;
+      }
+
+      /* 시간·환율 박스(.info-value) */
+      .info-value {
+        background-color: #262730;   /* 사이드바 배경과 동일 */
+        color: #EAEBF0;              /* 기존 폰트 컬러 */
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-weight: 500;
+      }
+    </style>
+    """, unsafe_allow_html=True)
 
     with st.sidebar:
         st.markdown('<div class="sidebar-logo">PENTHENA</div>', unsafe_allow_html=True)
