@@ -634,6 +634,41 @@ def main():
     st.set_page_config(page_title="PENTHENA AI Agent", layout="wide", initial_sidebar_state="expanded")
     load_css("style.css")
 
+    # --------------------------------------------------------------------
+    # 투명 배경을 못 덮고 있는 위젯들을 한 번에 투명 처리하는 CSS
+    # --------------------------------------------------------------------
+    st.markdown("""
+    <style>
+      /* 1) 모든 Markdown 컨테이너 (st.markdown, st.empty.write_stream) */
+      div[data-testid="stMarkdownContainer"],
+      div[class*="css-"] > div[class*="css-"] {
+        background-color: transparent !important;
+        border: none !important;
+      }
+    
+      /* 2) st.text() 출력부 */
+      div[data-testid="stText"] {
+        background-color: transparent !important;
+      }
+      div[data-testid="stText"] pre {
+        background-color: transparent !important;
+        border: none !important;
+      }
+    
+      /* 3) Expander 내부 영역 (열려있거나 닫혀있거나 모두) */
+      section[data-testid="stExpander"] > div[role="region"] {
+        background-color: transparent !important;
+        border: none !important;
+      }
+    
+      /* 4) write_stream() / st.empty() 가 그리는 영역 
+         (css-* 클래스가 랜덤이라 [class*="css-"]로 포괄) */
+      div[class*="css-"] > div[class*="css-"] {
+        background-color: transparent !important;
+      }
+    </style>
+    """, unsafe_allow_html=True)
+
     st.markdown("""
     <style>
       /* 1) JSON 위젯 배경 투명화 */
