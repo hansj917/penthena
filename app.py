@@ -634,6 +634,35 @@ def main():
     st.set_page_config(page_title="PENTHENA AI Agent", layout="wide", initial_sidebar_state="expanded")
     load_css("style.css")
 
+    # ---  추가: 기본 흰색 배경 투명 처리  ---
+    st.markdown("""
+    <style>
+      /* 채팅 입력창 배경 없애기 */
+      div[data-testid="stChatInput"] > div {
+        background-color: transparent !important;
+      }
+      div[data-testid="stChatInput"] textarea {
+        background-color: transparent !important;
+        color: #EAEBF0 !important;
+      }
+    
+      /* expander(“AI 원본 답변 보기”) 내용 배경 없애기 */
+      section[data-testid="stExpander"] > div[role="button"] + div {
+        background-color: transparent !important;
+      }
+    
+      /* expander 안의 텍스트 영역 */
+      section[data-testid="stExpander"] .stMarkdown > div {
+        background-color: transparent !important;
+      }
+    
+      /* 버튼·입력 위젯 주변 카드 영역도 투명 처리 (필요시) */
+      .css-1d391kg .css-1outpf7 {
+        background-color: transparent !important;
+      }
+    </style>
+    """, unsafe_allow_html=True)
+
     # ── 커스텀 사이드바 스타일 ──
     st.markdown("""
     <style>
