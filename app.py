@@ -633,7 +633,6 @@ def run_intelligent_agent(user_prompt):
 def main():
     st.set_page_config(page_title="PENTHENA AI Agent", layout="wide", initial_sidebar_state="expanded")
     load_css("style.css")
-
 # ── 사이드바 토글 햄버거 아이콘 추가 ──
 st.markdown("""
 <style>
