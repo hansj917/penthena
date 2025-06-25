@@ -431,23 +431,18 @@ def perform_web_research_and_synthesis(topic: str) -> str:
     try:
         st.success("웹 리서치 완료! AI가 결과를 종합하여 브리핑을 실시간으로 생성합니다...")
         response_placeholder = st.empty()
-        full_context = ""
 
-        # 직접 스트리밍해서 화면에 쓰고, 동시에 full_context에도 누적
-        stream = openai.chat.completions.create(
-            model="gpt-4o",
-            messages=[{"role": "user", "content": synthesis_prompt}],
-            stream=True
-        )
-        for chunk in stream:
-            delta = chunk.choices[0].delta.content or ""
-            full_context += delta
-            response_placeholder.write(delta)
+        def stream_generator():
+            stream = openai.chat.completions.create(
+                model="gpt-4o",
+                messages=[{"role": "user", "content": synthesis_prompt}],
+                stream=True
+            )
+            for chunk in stream:
+                yield chunk.choices[0].delta.content or ""
+
+        full_context = "".join(response_placeholder.write_stream(stream_generator()))
         return full_context
-
-    except Exception as e:
-        st.error(f"리서치 종합 실패: {e}")
-        return ""
 
 def display_research_briefing(context: str):
     st.markdown("<h3>AI 리서치 브리핑 (재구성)</h3>", unsafe_allow_html=True)
