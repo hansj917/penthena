@@ -544,8 +544,16 @@ def execute_pipeline(pipeline_name: str, steps: dict, topic: str, research_conte
                         if 'personas' in st.session_state.plan_data: previous_steps_summary += f"- 타겟 페르소나: {', '.join([p['Persona'] for p in st.session_state.plan_data['personas']])}\n"
                         if 'key_features' in st.session_state.plan_data and st.session_state.plan_data['key_features']:
                             previous_steps_summary += f"- 핵심 기능: {st.session_state.plan_data['key_features'][0].get('Feature', 'N/A')}\n"
-                    augmented_prompt = f'"{details["prompt_template"].format(p=topic)}"'
-                    text_result = stream_and_display_step(augmented_prompt)
+                    augmented_prompt = details["prompt_template"].format(p=topic)
+
+                    if details.get("display_type") == "custom":
+                        resp = openai.chat.completions.create(
+                            model="gpt-4o",
+                            messages=[{"role":"user","content":augmented_prompt}]
+                        )
+                        text_result = resp.choices[0].message.content.strip()
+                    else:
+                        text_result = stream_and_display_step(augmented_prompt)
                 if text_result:
                     display_type = details.get("display_type", "chart")
                     if display_type == "chart":
