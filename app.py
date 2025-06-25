@@ -243,15 +243,34 @@ def create_roadmap_gantt_chart(text: str) -> go.Figure:
 
 def create_kpi_bar_chart(text: str) -> go.Figure:
     df = parse_table_from_text(text)
-    if df.empty or len(df.columns) < 2: return create_empty_chart("AI가 유효한 KPI 데이터를<br>생성하지 못했습니다.")
-    try:
-        kpi_col, target_col = df.columns[0], df.columns[1]
-        df['numeric_target'] = pd.to_numeric(df[target_col].str.replace(r'[^0-9.]', '', regex=True), errors='coerce')
-        fig = px.bar(df, x=kpi_col, y='numeric_target', text=target_col, color_discrete_sequence=CHART_COLOR_PALETTE)
-        fig.update_traces(textposition='outside')
-        fig.update_layout(title_text="핵심 목표(KPI)", title_x=0.5, font_color=CHART_FONT_COLOR, paper_bgcolor=CHART_BG_COLOR, plot_bgcolor=CHART_BG_COLOR, xaxis_title="", yaxis_title="", margin=dict(t=40, b=20, l=20, r=20))
-        return fig
-    except Exception as e: return create_empty_chart(f"KPI 차트 렌더링 오류: {e}")
+    if df.empty or len(df.columns) < 2:
+        return create_empty_chart("AI가 유효한 KPI 데이터를<br>생성하지 못했습니다.")
+    kpi_col = df.columns[0]
+    # 숫자 컬럼을 마지막 컬럼으로 선택
+    value_col = df.columns[-1]
+    df['numeric_target'] = pd.to_numeric(
+        df[value_col].str.replace(r'[^0-9.]', '', regex=True),
+        errors='coerce'
+    ).fillna(0)
+    fig = px.bar(
+        df,
+        x=kpi_col,
+        y='numeric_target',
+        text=value_col,
+        color_discrete_sequence=CHART_COLOR_PALETTE
+    )
+    fig.update_traces(textposition='outside')
+    fig.update_layout(
+        title_text="핵심 오퍼 매력도",
+        title_x=0.5,
+        font_color=CHART_FONT_COLOR,
+        paper_bgcolor=CHART_BG_COLOR,
+        plot_bgcolor=CHART_BG_COLOR,
+        xaxis_title="오퍼 내용",
+        yaxis_title="매력도 (10점)",
+        margin=dict(t=40, b=20, l=20, r=20)
+    )
+    return fig
 
 def create_pie_chart(text: str) -> go.Figure:
     df = parse_table_from_text(text)
