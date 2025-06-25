@@ -194,7 +194,7 @@ def create_priority_chart(text: str, topic: str) -> go.Figure:
     header_map = {'기능': 'Feature', 'feature': 'Feature', '도달': 'Reach', 'reach': 'Reach', '영향': 'Impact', 'impact': 'Impact', '확신': 'Confidence', 'confidence': 'Confidence', '노력': 'Effort', 'effort': 'Effort'}
 
     if not all(col in df.columns for col in required_cols) and len(df.columns) == 5:
-    df.columns = ['Feature', 'Reach', 'Impact', 'Confidence', 'Effort']
+        df.columns = ['Feature', 'Reach', 'Impact', 'Confidence', 'Effort']
     
     if not df.empty:
         df.rename(columns=lambda c: header_map.get(c.strip().lower(), c.strip()), inplace=True)
