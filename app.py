@@ -242,50 +242,34 @@ def create_roadmap_gantt_chart(text: str) -> go.Figure:
     except Exception as e: return create_empty_chart(f"로드맵 차트 렌더링 오류: {e}")
 
 def create_kpi_bar_chart(text: str) -> go.Figure:
-    """
-    '목표'와 '핵심지표(KPI)' 컬럼을 가진 테이블에서
-    숫자만 뽑아내 그래프로 보여주는 함수.
-    없다면 라벨만 표시합니다.
-    """
     df = parse_table_from_text(text)
-    # 최소 2개 컬럼(목표, KPI) 필요
     if df.empty or len(df.columns) < 2:
-        return create_empty_chart("AI가 유효한 KPI 데이터를\n생성하지 못했습니다.")
-    
-    # 컬럼 이름 잡기
-    goal_col = df.columns[0]
-    kpi_col  = df.columns[1]
-    
-    # KPI에서 숫자 추출: 10%, 30.5 등의 숫자
-    df['numeric_kpi'] = (
-        df[kpi_col]
-        .astype(str)
-        .str.extract(r'([\d\.]+)')  # 숫자+소수점만
-        .iloc[:, 0]
-        .astype(float, errors='ignore')
-        .fillna(0)
-    )
-    
-    # 그래프 생성
+        return create_empty_chart("AI가 유효한 KPI 데이터를<br>생성하지 못했습니다.")
+    kpi_col = df.columns[0]
+    # 숫자 컬럼을 마지막 컬럼으로 선택
+    value_col = df.columns[-1]
+    df['numeric_target'] = pd.to_numeric(
+        df[value_col].str.replace(r'[^0-9.]', '', regex=True),
+        errors='coerce'
+    ).fillna(0)
     fig = px.bar(
         df,
-        x=goal_col,
-        y='numeric_kpi',
-        text=kpi_col,
+        x=kpi_col,
+        y='numeric_target',
+        text=value_col,
         color_discrete_sequence=CHART_COLOR_PALETTE
     )
     fig.update_traces(textposition='outside')
     fig.update_layout(
-        title_text="캠페인 목표",
+        title_text="핵심 오퍼 매력도",
         title_x=0.5,
         font_color=CHART_FONT_COLOR,
         paper_bgcolor=CHART_BG_COLOR,
         plot_bgcolor=CHART_BG_COLOR,
-        xaxis_title="목표",
-        yaxis_title="KPI 수치",
+        xaxis_title="오퍼 내용",
+        yaxis_title="매력도 (10점)",
         margin=dict(t=40, b=20, l=20, r=20)
     )
-    fig.update_yaxes(showgrid=True, gridcolor=GRID_COLOR)
     return fig
 
 def create_pie_chart(text: str) -> go.Figure:
