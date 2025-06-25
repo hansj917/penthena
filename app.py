@@ -274,7 +274,7 @@ def display_message_and_target_card(text: str):
         target_match = re.search(target_pattern, text, re.IGNORECASE | re.DOTALL)
         message_match = re.search(message_pattern, text, re.IGNORECASE | re.DOTALL)
         target = target_match.group(1).strip() if target_match else "타겟 정보 분석 실패"
-        message = message_match.group(1).strip() if (message_match and message_match.group(1).strip()) else "고객의 관심을 사로잡을 강력한 핵심 메시지를 제안합니다"
+        message = (message_match.group(1).strip() if message_match else "") or stream_and_display_step(f"'{target}'에 대한 짧고 강력한 핵심 메시지를 한 문장으로만 제안해줘.")
         card_html = f"""<div class="message-card-container"><div class="message-card-target"><h6>TARGET AUDIENCE</h6><p>{target}</p></div><div class="message-card-slogan"><h6>CORE MESSAGE</h6><p>"{message}"</p></div></div>"""
         st.markdown(card_html, unsafe_allow_html=True)
     except Exception:
@@ -310,7 +310,7 @@ def display_campaign_goals(text: str):
 
     # 컬럼명 고정
     df.columns = ['Goal', 'KPI']
-    cols = st.columns(2, gap="large")
+    cols = st.columns(min(len(df), 2), gap="large")
 
     for idx, row in df.iterrows():
         with cols[idx % 2]:
@@ -348,7 +348,7 @@ def display_core_offer(text: str):
     # 컬럼명 고정
     df.columns = ['offer', 'condition', 'score']
 
-    cols = st.columns(2, gap="large")
+    cols = st.columns(min(len(df), 2), gap="large")
     for idx, row in df.iterrows():
         with cols[idx % 2]:
             # 왼쪽 카드(첫 번째)는 강조된 보더, 오른쪽은 기본
