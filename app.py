@@ -1,6 +1,7 @@
 # =================================================================================
 # PENTHENA AI Agent - v19.3 (초기 화면 UI 단순화)
 # =================================================================================
+# 작성자: Google Gemini/GPT along with Dave Han
 # 업데이트 날짜: 2025-06-15
 #
 # 주요 변경 사항:
@@ -192,9 +193,6 @@ def create_priority_chart(text: str, topic: str) -> go.Figure:
     df = parse_table_from_text(text)
     required_cols = ['Reach', 'Impact', 'Confidence', 'Effort']
     header_map = {'기능': 'Feature', 'feature': 'Feature', '도달': 'Reach', 'reach': 'Reach', '영향': 'Impact', 'impact': 'Impact', '확신': 'Confidence', 'confidence': 'Confidence', '노력': 'Effort', 'effort': 'Effort'}
-
-    if not all(col in df.columns for col in required_cols) and len(df.columns) == 5:
-        df.columns = ['Feature', 'Reach', 'Impact', 'Confidence', 'Effort']
     
     if not df.empty:
         df.rename(columns=lambda c: header_map.get(c.strip().lower(), c.strip()), inplace=True)
@@ -246,38 +244,15 @@ def create_roadmap_gantt_chart(text: str) -> go.Figure:
 
 def create_kpi_bar_chart(text: str) -> go.Figure:
     df = parse_table_from_text(text)
-    if df.empty or len(df.columns) < 2:
-        return create_empty_chart("AI가 유효한 KPI 데이터를\n생성하지 못했습니다.")
-    goal_col = df.columns[0]
-    kpi_col = df.columns[-1]
-    df['numeric_kpi'] = (
-        df[kpi_col]
-            .astype(str)
-            .str.extract(r'([\d\.]+)')
-            .iloc[:, 0]
-            .astype(float, errors='ignore')
-            .fillna(0)
-    )
-    fig = px.bar(
-        df,
-        x=goal_col,
-        y='numeric_kpi',
-        text=kpi_col,
-        color_discrete_sequence=CHART_COLOR_PALETTE
-    )
-    fig.update_traces(textposition='outside')
-    fig.update_layout(
-        title_text="프로모션 목표 (KPI)",
-        title_x=0.5,
-        font_color=CHART_FONT_COLOR,
-        paper_bgcolor=CHART_BG_COLOR,
-        plot_bgcolor=CHART_BG_COLOR,
-        xaxis_title="목표",
-        yaxis_title="KPI 수치",
-        margin=dict(t=40, b=20, l=20, r=20)
-    )
-    fig.update_yaxes(showgrid=True, gridcolor=GRID_COLOR)
-    return fig
+    if df.empty or len(df.columns) < 2: return create_empty_chart("AI가 유효한 KPI 데이터를<br>생성하지 못했습니다.")
+    try:
+        kpi_col, target_col = df.columns[0], df.columns[1]
+        df['numeric_target'] = pd.to_numeric(df[target_col].str.replace(r'[^0-9.]', '', regex=True), errors='coerce')
+        fig = px.bar(df, x=kpi_col, y='numeric_target', text=target_col, color_discrete_sequence=CHART_COLOR_PALETTE)
+        fig.update_traces(textposition='outside')
+        fig.update_layout(title_text="핵심 목표(KPI)", title_x=0.5, font_color=CHART_FONT_COLOR, paper_bgcolor=CHART_BG_COLOR, plot_bgcolor=CHART_BG_COLOR, xaxis_title="", yaxis_title="", margin=dict(t=40, b=20, l=20, r=20))
+        return fig
+    except Exception as e: return create_empty_chart(f"KPI 차트 렌더링 오류: {e}")
 
 def create_pie_chart(text: str) -> go.Figure:
     df = parse_table_from_text(text)
@@ -294,8 +269,8 @@ def create_pie_chart(text: str) -> go.Figure:
 
 def display_message_and_target_card(text: str):
     try:
-        target_pattern  = r"타겟\s*[:：]?\s*(.*?)(?=\n|메시지|핵심 메시지|슬로건|$)"
-        message_pattern = r"메시지\s*[:：]?\s*\"?(.*?)\"?(?=\n|$)"
+        target_pattern = r"(?:타겟|타겟 고객|주 타겟)\s*[:]?\s*(.*?)(?=\n(?:-|\*|#)|메시지|핵심 메시지|슬로건|$)"
+        message_pattern = r"(?:메시지|핵심 메시지|슬로건)\s*[:]?\s*\"?(.*?)\"?"
         target_match = re.search(target_pattern, text, re.IGNORECASE | re.DOTALL)
         message_match = re.search(message_pattern, text, re.IGNORECASE | re.DOTALL)
         target = target_match.group(1).strip() if target_match else "타겟 정보 분석 실패"
@@ -551,8 +526,8 @@ def execute_pipeline(pipeline_name: str, steps: dict, topic: str, research_conte
                         if 'personas' in st.session_state.plan_data: previous_steps_summary += f"- 타겟 페르소나: {', '.join([p['Persona'] for p in st.session_state.plan_data['personas']])}\n"
                         if 'key_features' in st.session_state.plan_data and st.session_state.plan_data['key_features']:
                             previous_steps_summary += f"- 핵심 기능: {st.session_state.plan_data['key_features'][0].get('Feature', 'N/A')}\n"
-                        augmented_prompt = f'"{details["prompt_template"].format(p=topic)}"'
-                        text_result      = stream_and_display_step(augmented_prompt)
+                    augmented_prompt = f'"{details["prompt_template"].format(p=topic)}"'
+                    text_result = stream_and_display_step(augmented_prompt)
                 if text_result:
                     display_type = details.get("display_type", "chart")
                     if display_type == "chart":
@@ -844,10 +819,11 @@ def main():
         st.session_state.prompt_history.insert(0, prompt)
         st.rerun()
 
-if st.session_state.get('messages'):
-    user_prompt = st.session_state.messages[-1]["content"]
-    with st.chat_message("assistant"):
-        run_intelligent_agent(user_prompt)
+    if st.session_state.get('messages') and 'last_prompt' not in st.session_state:
+        user_prompt = st.session_state.messages[-1]["content"]
+        st.session_state.last_prompt = user_prompt
+        with st.chat_message("assistant"):
+            run_intelligent_agent(user_prompt)
 
     st.markdown('</div>', unsafe_allow_html=True)
 
