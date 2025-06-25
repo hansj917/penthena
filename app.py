@@ -1,7 +1,6 @@
 # =================================================================================
 # PENTHENA AI Agent - v19.3 (초기 화면 UI 단순화)
 # =================================================================================
-# 작성자: Google Gemini/GPT along with Dave Han
 # 업데이트 날짜: 2025-06-15
 #
 # 주요 변경 사항:
@@ -633,6 +632,30 @@ def run_intelligent_agent(user_prompt):
 def main():
     st.set_page_config(page_title="PENTHENA AI Agent", layout="wide", initial_sidebar_state="expanded")
     load_css("style.css")
+
+    # --- 사이드바 토글 버튼 & CSS ---
+    if 'sidebar_hidden' not in st.session_state:
+        st.session_state.sidebar_hidden = False
+
+    toggle_label = "▶️ 열기" if st.session_state.sidebar_hidden else "◀️ 닫기"
+    if st.button(toggle_label, use_container_width=True):
+        st.session_state.sidebar_hidden = not st.session_state.sidebar_hidden
+
+    sidebar_display = "none" if st.session_state.sidebar_hidden else "block"
+    main_margin   = "0rem"  if st.session_state.sidebar_hidden else "18rem"
+
+    st.markdown(f"""
+        <style>
+          /* 사이드바 보이기/숨기기 */
+          [data-testid="stSidebar"] {{
+            display: {sidebar_display} !important;
+          }}
+          /* 본문 좌측 여백 조정 */
+          [data-testid="stAppViewContainer"] {{
+            margin-left: {main_margin} !important;
+          }}
+        </style>
+    """, unsafe_allow_html=True)
 
     # --------------------------------------------------------------------
     # 투명 배경을 못 덮고 있는 위젯들을 한 번에 투명 처리하는 CSS
