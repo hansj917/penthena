@@ -310,7 +310,7 @@ def display_campaign_goals(text: str):
 
     # 컬럼명 고정
     df.columns = ['Goal', 'KPI']
-    cols = st.columns(min(len(df), 2), gap="large")
+    cols = st.columns(2, gap="large")
 
     for idx, row in df.iterrows():
         with cols[idx % 2]:
@@ -348,7 +348,7 @@ def display_core_offer(text: str):
     # 컬럼명 고정
     df.columns = ['offer', 'condition', 'score']
 
-    cols = st.columns(min(len(df), 2), gap="large")
+    cols = st.columns(2, gap="large")
     for idx, row in df.iterrows():
         with cols[idx % 2]:
             # 왼쪽 카드(첫 번째)는 강조된 보더, 오른쪽은 기본
@@ -666,7 +666,7 @@ def marketing_campaign_pipeline(topic: str, research_context: str):
     st.markdown("<h2>III. 마케팅 캠페인 분석</h2>", unsafe_allow_html=True)
     steps = {
         "캠페인 목표": {"prompt_template": "'{p}' 마케팅 캠페인의 구체적인 목표 3가지를 '목표', '핵심지표(KPI)' 컬럼의 마크다운 테이블로 만들어줘. 답변은 테이블 외에 다른 설명을 포함하지 마.", "display_type": "custom", "func": display_campaign_goals},
-        "타겟 & 핵심 메시지": {"prompt_template": "캠페인의 **가장 중요한 타겟 고객** 한 그룹을 명확히 정의하고, 그들의 마음을 움직일 수 있는 **짧고 강력한 핵심 슬로건**을 제안해줘. 답변은 반드시 '타겟: [간결한 타겟 설명]'과 '핵심 메시지: \"[기억하기 쉬운 슬로건]\"' 형식으로, 다른 설명 없이 두 줄로만 작성해줘.", "display_type": "custom", "func": display_message_and_target_card},
+        "타겟 & 핵심 메시지": {"prompt_template": "주제 '{p}' 캠페인에 가장 중요한 타겟 고객 한 그룹을 정의하고, 그들의 마음을 사로잡을 짧고 강력한 핵심 슬로건을 제안해줘. 답변은 반드시 '타겟: [간결한 타겟 설명]'과 '핵심 메시지: \"[기억하기 쉬운 슬로건]\"' 두 줄로만 작성해줘.", "display_type": "custom", "func": display_message_and_target_card},
         "콘텐츠 전략": {"prompt_template": "최신 트렌드를 반영하여 '{p}' 캠페인을 위한 핵심 콘텐츠 아이디어 3가지를 '콘텐츠 형식', '주요 내용' 컬럼의 마크다운 테이블로 만들어줘.", "display_type": "custom", "func": display_content_strategy_cards},
         "채널 믹스": {"prompt_template": "'{p}' 캠페인에 활용할 미디어 채널 믹스를 '채널 구분(Owned/Paid/Earned)', '채널명', '예산 비중(%)' 컬럼의 마크다운 테이블로 만들어줘.", "display_type": "chart", "func": create_sunburst_chart},
         "실행 타임라인": {"prompt_template": f"'{topic}' 캠페인의 3개월 타임라인을 주요 마일스톤별로 나누어 마크다운 테이블(Task, Start, Finish)로 만들어줘. 날짜는 {datetime.now().year+1}-MM-DD 형식으로.", "display_type": "chart", "func": create_roadmap_gantt_chart}
