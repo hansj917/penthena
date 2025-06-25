@@ -294,6 +294,20 @@ def display_content_strategy_cards(text: str):
     except Exception as e:
         st.error(f"콘텐츠 전략 카드 생성 오류: {e}"); st.dataframe(df)
 
+def display_core_offer(text: str):
+    """AI가 반환한 ‘핵심 오퍼’ 마크다운을 예쁜 박스 안에 넣어줍니다."""
+    html = f"""
+    <div style="
+        background-color: #262730;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+    ">
+        {text.replace('\n', '<br>')}
+    </div>
+    """
+    st.markdown(html, unsafe_allow_html=True)
+
 def create_sunburst_chart(text: str) -> go.Figure:
     df = parse_table_from_text(text)
     if df.empty or len(df.columns) < 3: return create_empty_chart("AI가 유효한 채널 믹스 데이터를<br>생성하지 못했습니다.")
@@ -579,7 +593,7 @@ def promotion_planning_pipeline(topic: str, research_context: str):
     steps = {
         "프로모션 목표(KPI)": {"prompt_template": "앞선 분석 내용을 바탕으로, '{p}' 프로모션을 위한 구체적인 핵심 목표 3가지를 'KPI', '목표치' 컬럼의 마크다운 테이블로 만들어줘.", "display_type": "chart", "func": create_kpi_bar_chart, "layout_group": "프로모션 목표 및 타겟"},
         "타겟 고객": {"prompt_template": "앞서 정의된 타겟 페르소나 기반으로 '{p}' 프로모션의 타겟 고객 그룹 3개를 '고객 그룹', '특징', '예상 도달률(%)' 컬럼의 마크다운 테이블로 만들어줘.", "display_type": "chart", "func": create_customer_segment_chart, "layout_group": "프로모션 목표 및 타겟"},
-        "핵심 오퍼": {"prompt_template": "경쟁사와 트렌드, 우리 제품 기능을 고려하여 '{p}' 프로모션의 매력적인 혜택 3가지를 '오퍼 내용', '조건', '매력도(10점)' 컬럼의 마크다운 테이블로 만들어줘.", "display_type": "chart", "func": create_kpi_bar_chart},
+        "핵심 오퍼": {"prompt_template": "경쟁사와 트렌드, 우리 제품 기능을 고려하여 '{p}' 프로모션의 매력적인 혜택 3가지를 '오퍼 내용', '조건', '매력도(10점)' 컬럼의 마크다운 테이블로 만들어줘.", "display_type": "custom", "func": display_core_offer},
         "홍보 채널": {"prompt_template": "타겟 고객이 주로 활동하는 채널 중심으로 '{p}' 프로모션 홍보 채널 4개와 예상 예산 비율(%)을 '채널', '예산 비율(%)' 컬럼의 마크다운 테이블로 만들어줘.", "display_type": "chart", "func": create_pie_chart},
         "기간 및 일정": {"prompt_template": f"'{topic}' 프로모션의 주요 일정을 4단계로 나누어 마크다운 테이블(Task, Start, Finish)로 만들어줘. 날짜는 {datetime.now().year+1}-MM-DD 형식으로.", "display_type": "chart", "func": create_roadmap_gantt_chart}
     }
