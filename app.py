@@ -317,14 +317,7 @@ def display_campaign_goals(text: str):
             # 첫 번째 카드만 보더 강조
             border = "border:2px solid #6C5FF5;" if idx == 0 else ""
             st.markdown(f"""
-            <div style="
-                background-color: #262730;
-                border-radius: 12px;
-                {border}
-                padding: 20px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                margin-bottom: 16px;
-            ">
+                <div style="background-color:#262730; border-radius:12px; {border} padding:20px; box-shadow:0 4px 12px rgba(0,0,0,0.3); margin-bottom:16px;">
                 <h4 style="color:#EAEBF0; margin-bottom:8px;">{row['Goal']}</h4>
                 <p style="color:#A5D8E2; font-size:0.9em; margin:0;">
                     핵심 지표(KPI): {row['KPI']}
