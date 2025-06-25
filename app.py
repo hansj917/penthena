@@ -192,6 +192,9 @@ def create_priority_chart(text: str, topic: str) -> go.Figure:
     df = parse_table_from_text(text)
     required_cols = ['Reach', 'Impact', 'Confidence', 'Effort']
     header_map = {'기능': 'Feature', 'feature': 'Feature', '도달': 'Reach', 'reach': 'Reach', '영향': 'Impact', 'impact': 'Impact', '확신': 'Confidence', 'confidence': 'Confidence', '노력': 'Effort', 'effort': 'Effort'}
+
+    if not all(col in df.columns for col in required_cols) and len(df.columns) == 5:
+    df.columns = ['Feature', 'Reach', 'Impact', 'Confidence', 'Effort']
     
     if not df.empty:
         df.rename(columns=lambda c: header_map.get(c.strip().lower(), c.strip()), inplace=True)
@@ -244,32 +247,36 @@ def create_roadmap_gantt_chart(text: str) -> go.Figure:
 def create_kpi_bar_chart(text: str) -> go.Figure:
     df = parse_table_from_text(text)
     if df.empty or len(df.columns) < 2:
-        return create_empty_chart("AI가 유효한 KPI 데이터를<br>생성하지 못했습니다.")
-    kpi_col = df.columns[0]
-    # 숫자 컬럼을 마지막 컬럼으로 선택
-    value_col = df.columns[-1]
-    df['numeric_target'] = pd.to_numeric(
-        df[value_col].str.replace(r'[^0-9.]', '', regex=True),
-        errors='coerce'
-    ).fillna(0)
+        return create_empty_chart("AI가 유효한 KPI 데이터를\n생성하지 못했습니다.")
+    goal_col = df.columns[0]
+    kpi_col = df.columns[-1]
+    df['numeric_kpi'] = (
+        df[kpi_col]
+            .astype(str)
+            .str.extract(r'([\d\.]+)')
+            .iloc[:, 0]
+            .astype(float, errors='ignore')
+            .fillna(0)
+    )
     fig = px.bar(
         df,
-        x=kpi_col,
-        y='numeric_target',
-        text=value_col,
+        x=goal_col,
+        y='numeric_kpi',
+        text=kpi_col,
         color_discrete_sequence=CHART_COLOR_PALETTE
     )
     fig.update_traces(textposition='outside')
     fig.update_layout(
-        title_text="핵심 오퍼 매력도",
+        title_text="프로모션 목표 (KPI)",
         title_x=0.5,
         font_color=CHART_FONT_COLOR,
         paper_bgcolor=CHART_BG_COLOR,
         plot_bgcolor=CHART_BG_COLOR,
-        xaxis_title="오퍼 내용",
-        yaxis_title="매력도 (10점)",
+        xaxis_title="목표",
+        yaxis_title="KPI 수치",
         margin=dict(t=40, b=20, l=20, r=20)
     )
+    fig.update_yaxes(showgrid=True, gridcolor=GRID_COLOR)
     return fig
 
 def create_pie_chart(text: str) -> go.Figure:
@@ -287,8 +294,8 @@ def create_pie_chart(text: str) -> go.Figure:
 
 def display_message_and_target_card(text: str):
     try:
-        target_pattern = r"(?:타겟|타겟 고객|주 타겟)\s*[:]?\s*(.*?)(?=\n(?:-|\*|#)|메시지|핵심 메시지|슬로건|$)"
-        message_pattern = r"(?:메시지|핵심 메시지|슬로건)\s*[:]?\s*\"?(.*?)\"?"
+        target_pattern  = r"타겟\s*[:：]?\s*(.*?)(?=\n|메시지|핵심 메시지|슬로건|$)"
+        message_pattern = r"메시지\s*[:：]?\s*\"?(.*?)\"?(?=\n|$)"
         target_match = re.search(target_pattern, text, re.IGNORECASE | re.DOTALL)
         message_match = re.search(message_pattern, text, re.IGNORECASE | re.DOTALL)
         target = target_match.group(1).strip() if target_match else "타겟 정보 분석 실패"
@@ -837,11 +844,10 @@ def main():
         st.session_state.prompt_history.insert(0, prompt)
         st.rerun()
 
-    if st.session_state.get('messages') and 'last_prompt' not in st.session_state:
-        user_prompt = st.session_state.messages[-1]["content"]
-        st.session_state.last_prompt = user_prompt
-        with st.chat_message("assistant"):
-            run_intelligent_agent(user_prompt)
+if st.session_state.get('messages'):
+    user_prompt = st.session_state.messages[-1]["content"]
+    with st.chat_message("assistant"):
+        run_intelligent_agent(user_prompt)
 
     st.markdown('</div>', unsafe_allow_html=True)
 
