@@ -631,129 +631,143 @@ def run_intelligent_agent(user_prompt):
             st.markdown(response.choices[0].message.content)
 
 def main():
-    st.set_page_config(
-        page_title="PENTHENA AI Agent",
-        layout="wide",
-        initial_sidebar_state="expanded"
-    )
+    st.set_page_config(page_title="PENTHENA AI Agent", layout="wide", initial_sidebar_state="expanded")
+    load_css("style.css")
 
-    # ——— 사이드바 열림/닫힘에 따라 메인 레이아웃 자동 조정 CSS ———
-    st.markdown(
-        """
-        <style>
-          /* 사이드바 접힘/펼침 토글 컨테이너 스타일 */
-          [data-testid="stSidebar"] {
-            width: 320px !important;
-            min-width: 200px !important;
-            max-width: 400px !important;
-          }
-          /* 닫혔을 때: 메인 영역 좌측 여백 0 */
-          [data-testid="stSidebar"][aria-expanded="false"] ~ div[data-testid="stAppViewContainer"] {
-            margin-left: 0 !important;
-          }
-          /* 열렸을 때: 메인 영역 좌측 여백 == 사이드바 너비 */
-          [data-testid="stSidebar"][aria-expanded="true"] ~ div[data-testid="stAppViewContainer"] {
-            margin-left: 320px !important;
-          }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+    # --------------------------------------------------------------------
+    # 투명 배경을 못 덮고 있는 위젯들을 한 번에 투명 처리하는 CSS
+    # --------------------------------------------------------------------
+    st.markdown("""
+    <style>
+      /* 1) 모든 Markdown 컨테이너 (st.markdown, st.empty.write_stream) */
+      div[data-testid="stMarkdownContainer"],
+      div[class*="css-"] > div[class*="css-"] {
+        background-color: transparent !important;
+        border: none !important;
+      }
+    
+      /* 2) st.text() 출력부 */
+      div[data-testid="stText"] {
+        background-color: transparent !important;
+      }
+      div[data-testid="stText"] pre {
+        background-color: transparent !important;
+        border: none !important;
+      }
+    
+      /* 3) Expander 내부 영역 (열려있거나 닫혀있거나 모두) */
+      section[data-testid="stExpander"] > div[role="region"] {
+        background-color: transparent !important;
+        border: none !important;
+      }
+    
+      /* 4) write_stream() / st.empty() 가 그리는 영역 
+         (css-* 클래스가 랜덤이라 [class*="css-"]로 포괄) */
+      div[class*="css-"] > div[class*="css-"] {
+        background-color: transparent !important;
+      }
+    </style>
+    """, unsafe_allow_html=True)
 
-    # 투명 배경 처리 CSS
-    st.markdown(
-        """
-        <style>
-          div[data-testid="stMarkdownContainer"],
-          div[class*="css-"] > div[class*="css-"] {
-            background-color: transparent !important;
-            border: none !important;
-          }
-          div[data-testid="stText"],
-          div[data-testid="stText"] pre,
-          section[data-testid="stExpander"] > div[role="region"],
-          div[class*="css-"] > div[class*="css-"] {
-            background-color: transparent !important;
-            border: none !important;
-          }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+    st.markdown("""
+    <style>
+      /* 1) JSON 위젯 배경 투명화 */
+      div[data-testid="stJson"] {
+        background-color: transparent !important;
+        border: none !important;
+      }
+    
+      /* 2) 스피너 / 성공 메시지 박스(스트림릿 상태 위젯) 배경 투명화 */
+      div[data-testid="stStatusWidget"] {
+        background-color: transparent !important;
+      }
+    
+      /* 3) 모든 <pre> 태그 (코드 블록) 배경 투명화 */
+      pre {
+        background-color: transparent !important;
+        border: none !important;
+      }
+    
+      /* 4) 확장(expander) 본문 중 또 흰 블록이 남아 있으면 대비용 */
+      section[data-testid="stExpander"] div[role="button"] + div > div {
+        background-color: transparent !important;
+      }
+    </style>
+    """, unsafe_allow_html=True)
 
-    # JSON·스피너·코드블록 배경 투명화
-    st.markdown(
-        """
-        <style>
-          div[data-testid="stJson"],
-          div[data-testid="stStatusWidget"],
-          pre {
-            background-color: transparent !important;
-            border: none !important;
-          }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+    # ---  추가: 기본 흰색 배경 투명 처리  ---
+    st.markdown("""
+    <style>
+      /* 채팅 입력창 배경 없애기 */
+      div[data-testid="stChatInput"] > div {
+        background-color: transparent !important;
+      }
+      div[data-testid="stChatInput"] textarea {
+        background-color: transparent !important;
+        color: #EAEBF0 !important;
+      }
+    
+      /* expander(“AI 원본 답변 보기”) 내용 배경 없애기 */
+      section[data-testid="stExpander"] > div[role="button"] + div {
+        background-color: transparent !important;
+      }
+    
+      /* expander 안의 텍스트 영역 */
+      section[data-testid="stExpander"] .stMarkdown > div {
+        background-color: transparent !important;
+      }
+    
+      /* 버튼·입력 위젯 주변 카드 영역도 투명 처리 (필요시) */
+      .css-1d391kg .css-1outpf7 {
+        background-color: transparent !important;
+      }
+    </style>
+    """, unsafe_allow_html=True)
 
-    # 채팅 입력창 및 버튼 투명 처리
-    st.markdown(
-        """
-        <style>
-          div[data-testid="stChatInput"] > div,
-          div[data-testid="stChatInput"] textarea,
-          section[data-testid="stExpander"] > div[role="button"] + div,
-          section[data-testid="stExpander"] .stMarkdown > div,
-          .css-1d391kg .css-1outpf7 {
-            background-color: transparent !important;
-            color: #EAEBF0 !important;
-          }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+    # ── 커스텀 사이드바 스타일 ──
+    st.markdown("""
+    <style>
+      /* 1) 사이드바 폭 고정 (원하는 너비로 조정) */
+      [data-testid="stSidebar"] {
+        width: 320px !important;
+        min-width: 320px !important;
+        max-width: 320px !important;
+      }
+      /* 2) 사이드바 드래그 핸들 비활성화 */
+      [data-testid="columnResizer"] {
+        pointer-events: none;
+      }
 
-    # 커스텀 사이드바 스타일
-    st.markdown(
-        """
-        <style>
-          [data-testid="stSidebar"] {
-            width: 320px !important;
-            min-width: 320px !important;
-            max-width: 320px !important;
-          }
-          [data-testid="columnResizer"] {
-            pointer-events: none;
-          }
-          .info-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 4px;
-          }
-          .info-item .info-label {
-            white-space: nowrap;
-            margin-right: 6px;
-          }
-          .info-item .info-value {
-            min-width: 40px;
-            padding: 2px 4px;
-            background-color: #262730;
-            color: #EAEBF0;
-            border-radius: 4px;
-            text-align: center;
-            font-weight: 500;
-            white-space: nowrap;
-          }
-          [data-testid="stSidebar"] .stButton > button {
-            white-space: nowrap !important;
-            min-width: 50px;
-            padding: 4px 8px;
-          }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+      /* 3) info-item 간격 좁히기 */
+      .info-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 4px;      /* 아래 아이템과 세로 간격 */
+      }
+      .info-item .info-label {
+        white-space: nowrap;      /* 레이블 줄바꿈 금지 */
+        margin-right: 6px;        /* 레이블→값 간 가로 간격 */
+      }
+      .info-item .info-value {
+        min-width: 40px;          /* 값 박스 최소 너비 */
+        padding: 2px 4px;         /* 안쪽 여백 */
+        background-color: #262730;
+        color: #EAEBF0;
+        border-radius: 4px;
+        text-align: center;
+        font-weight: 500;
+        white-space: nowrap;      /* 숫자 줄바꿈 금지 */
+      }
+
+      /* 4) 삭제 버튼 텍스트 줄바꿈 방지 & 최소 너비 */
+      [data-testid="stSidebar"] .stButton > button {
+        white-space: nowrap !important;
+        min-width: 50px;          /* 버튼 최소 너비 */
+        padding: 4px 8px;         /* 버튼 안쪽 여백 */
+      }
+    </style>
+    """, unsafe_allow_html=True)
 
     with st.sidebar:
         st.markdown('<div class="sidebar-logo">PENTHENA</div>', unsafe_allow_html=True)
@@ -767,13 +781,16 @@ def main():
         display_exchange_rates()
         st.divider()
 
+        # ── 분석 기록 + 삭제 버튼 ──
         col1, col2 = st.columns([0.8, 0.2])
         with col1:
             st.markdown("<h5><span class='icon-dot'></span> 분석 기록</h5>", unsafe_allow_html=True)
         with col2:
+            # 정확히 8칸 들여쓰기(4 + 4)입니다
             if st.button("삭제", use_container_width=True, key="clear_history", type="primary"):
                 st.session_state.prompt_history = []
                 st.rerun()
+        # ────────────────────────────
 
         if 'prompt_history' not in st.session_state:
             st.session_state.prompt_history = []
@@ -787,8 +804,9 @@ def main():
     st.title("PENTHENA Intelligence")
     st.write("분석하고 싶은 기획 주제를 자유롭게 입력해주세요. AI가 실시간 웹 리서치를 통해 통합 비즈니스 플랜을 생성합니다.")
 
-    if 'messages' not in st.session_state:
-        st.session_state.messages = []
+    if 'messages' not in st.session_state: st.session_state.messages = []
+    
+   
 
     for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
@@ -797,8 +815,7 @@ def main():
     if prompt := st.chat_input("새로운 기획 분석을 시작합니다..."):
         st.session_state.clear()
         st.session_state.messages = [{"role": "user", "content": prompt}]
-        if 'prompt_history' not in st.session_state:
-            st.session_state.prompt_history = []
+        if 'prompt_history' not in st.session_state: st.session_state.prompt_history = []
         st.session_state.prompt_history.insert(0, prompt)
         st.rerun()
 
@@ -809,7 +826,6 @@ def main():
             run_intelligent_agent(user_prompt)
 
     st.markdown('</div>', unsafe_allow_html=True)
-
 
 if __name__ == "__main__":
     main()
