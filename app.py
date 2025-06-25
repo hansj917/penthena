@@ -633,50 +633,61 @@ def main():
     st.set_page_config(page_title="PENTHENA AI Agent", layout="wide", initial_sidebar_state="expanded")
     load_css("style.css")
 
-    # --- 사이드바 토글 상태 초기화 ---
+    # 0) sidebar_hidden 상태 초기화
     if 'sidebar_hidden' not in st.session_state:
         st.session_state.sidebar_hidden = False
 
-    # --- 사이드바 안 토글 버튼 삽입 ---
+    # 1) 토글 버튼 (sidebar 안에 넣기만)
     toggle_label = "▶️" if st.session_state.sidebar_hidden else "◀️"
-    st.sidebar.markdown('<div class="toggle-wrapper">', unsafe_allow_html=True)
-    if st.sidebar.button(toggle_label, key="toggle_sidebar"):
-        st.session_state.sidebar_hidden = not st.session_state.sidebar_hidden
-    st.sidebar.markdown('</div>', unsafe_allow_html=True)
+    st.sidebar.markdown(f"""
+      <button class="toggle-btn" onclick="document.getElementById('toggle_sidebar_py').click()">
+        {toggle_label}
+      </button>
+      <div style="height:0;overflow:hidden">
+        <!-- 숨겨진 실제 파이썬 버튼 -->
+        <button id="toggle_sidebar_py" style="display:none">
+          토글
+        </button>
+      </div>
+    """, unsafe_allow_html=True)
 
-    # --- 토글 + 레이아웃 CSS ---
+    # 2) 실제 세션 토글 연결
+    if st.sidebar.button("사이드바 토글", key="toggle_sidebar", help="사이드바 열고 닫기", label_visibility="collapsed"):
+        st.session_state.sidebar_hidden = not st.session_state.sidebar_hidden
+
+    # 3) 토글 + 레이아웃 CSS
     sidebar_display = "none" if st.session_state.sidebar_hidden else "block"
     main_margin   = "0px"  if st.session_state.sidebar_hidden else "320px"
 
     st.markdown(f"""
     <style>
-      /* 1) 토글 버튼 래퍼: 높이만 확보 */
-      .toggle-wrapper {{
-        position: relative;
-        height: 0;
-        margin-bottom: 16px;
-      }}
-      /* 2) 토글 버튼 위치 & 스타일 */
-      .toggle-wrapper .stButton > button {{
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        width: 28px;
-        height: 28px;
-        padding: 0;
-        background: #ffffff !important;
-        border: 1px solid #ccc !important;
-        border-radius: 4px !important;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
-        font-size: 16px;
-      }}
-      /* 3) 사이드바 숨김/보임 */
+      /* (A) sidebar 기본 위치를 relative로 */  
       [data-testid="stSidebar"] {{
+        position: relative;
         display: {sidebar_display} !important;
       }}
-      /* 4) 본문 영역 좌측 여백 조정 */
+      /* (B) 절대위치 toggle-btn */
+      [data-testid="stSidebar"] .toggle-btn {{
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 32px;
+        height: 32px;
+        border: none;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.1);
+        color: #fff;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }}
+      [data-testid="stSidebar"] .toggle-btn:hover {{
+        background: rgba(255,255,255,0.2);
+      }}
+      /* (C) 본문 영역 좌측 여백 */
       [data-testid="stAppViewContainer"] {{
         margin-left: {main_margin} !important;
+        transition: margin 0.2s ease;
       }}
     </style>
     """, unsafe_allow_html=True)
