@@ -435,7 +435,7 @@ def display_research_briefing(context: str):
     sections = {"핵심 요약": "summary", "시장 동향": "trends", "핵심 플레이어": "competitors", "주요 경쟁사": "competitors", "주요 타겟 고객": "audience", "핵심 기술": "tech", "주요 통계": "stats"}
     parsed_sections = {}
     for key in sections.keys():
-        pattern = re.compile(rf"-\s*\*+{key}\*+.*?\n(.*?)(?=\n\s*-\s*\*|\Z)", re.DOTALL | re.IGNORECASE)
+        pattern = re.compile(rf"-\s*\*+{re.escape(key)}\*+.*?\n(.*?)(?=\n\s*-\s*\*|\Z)", re.DOTALL | re.IGNORECASE)
         match = pattern.search(context)
         if match and key not in parsed_sections:
             parsed_sections[key] = match.group(1).strip()
