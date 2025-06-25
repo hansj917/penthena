@@ -274,7 +274,7 @@ def display_message_and_target_card(text: str):
         target_match = re.search(target_pattern, text, re.IGNORECASE | re.DOTALL)
         message_match = re.search(message_pattern, text, re.IGNORECASE | re.DOTALL)
         target = target_match.group(1).strip() if target_match else "타겟 정보 분석 실패"
-        message = message_match.group(1).strip() if message_match else "메시지 정보 분석 실패"
+        message = message_match.group(1).strip() if (message_match and message_match.group(1).strip()) else "고객의 관심을 사로잡을 강력한 핵심 메시지를 제안합니다"
         card_html = f"""<div class="message-card-container"><div class="message-card-target"><h6>TARGET AUDIENCE</h6><p>{target}</p></div><div class="message-card-slogan"><h6>CORE MESSAGE</h6><p>"{message}"</p></div></div>"""
         st.markdown(card_html, unsafe_allow_html=True)
     except Exception:
@@ -297,121 +297,79 @@ def display_content_strategy_cards(text: str):
 def display_campaign_goals(text: str):
     """
     AI가 반환한 ‘캠페인 목표’ 마크다운 테이블을
-    3컬럼 카드 레이아웃으로 예쁘게 렌더링합니다.
+    2컬럼 카드 스타일로 예쁘게 렌더링합니다.
     """
-    # 1) 텍스트에서 표만 파싱
     df = parse_table_from_text(text)
-    
-    # 2) 파싱 성공했으면 카드로
-    if not df.empty:
-        # 컬럼명 고정
-        df.columns = ['Goal', 'KPI']
-        
-        # 최대 3컬럼 레이아웃
-        cols = st.columns(min(len(df), 3), gap="large")
-        for idx, row in df.iterrows():
-            with cols[idx % 3]:
-                card = f"""
-                <div style="
-                    background-color: #262730;
-                    border-radius: 12px;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                    padding: 16px;
-                    margin-bottom: 16px;
-                ">
-                    <h5 style="
-                        color: #EAEBF0;
-                        margin: 0 0 8px;
-                        font-weight: 600;
-                    ">{row['Goal']}</h5>
-                    <p style="
-                        margin: 0;
-                        color: #A5D8E2;
-                        font-size: 0.9em;
-                    ">핵심 지표(KPI): {row['KPI']}</p>
-                </div>
-                """
-                st.markdown(card, unsafe_allow_html=True)
-    else:
-        # 파싱 실패 시 원본 텍스트 노출
-        fallback = f"""
-        <div style="
-            background-color: #262730;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-        ">
-            <pre style="
-                color: #EAEBF0;
-                white-space: pre-wrap;
-            ">{text}</pre>
-        </div>
-        """
-        st.markdown(fallback, unsafe_allow_html=True)
+    if df.empty:
+        # 테이블 파싱 실패 시 원본 텍스트 노출
+        st.markdown(f"""
+        <div style="background-color:#262730;border-radius:12px;padding:16px;margin-bottom:16px;">
+            <pre style="color:#EAEBF0;white-space:pre-wrap;">{text}</pre>
+        </div>""", unsafe_allow_html=True)
+        return
+
+    # 컬럼명 고정
+    df.columns = ['Goal', 'KPI']
+    cols = st.columns(2, gap="large")
+
+    for idx, row in df.iterrows():
+        with cols[idx % 2]:
+            # 첫 번째 카드만 보더 강조
+            border = "border:2px solid #6C5FF5;" if idx == 0 else ""
+            st.markdown(f"""
+            <div style="
+                background-color: #262730;
+                border-radius: 12px;
+                {border}
+                padding: 20px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                margin-bottom: 16px;
+            ">
+                <h4 style="color:#EAEBF0; margin-bottom:8px;">{row['Goal']}</h4>
+                <p style="color:#A5D8E2; font-size:0.9em; margin:0;">
+                    핵심 지표(KPI): {row['KPI']}
+                </p>
+            </div>""", unsafe_allow_html=True)
 
 def display_core_offer(text: str):
     """
     AI가 반환한 ‘핵심 오퍼’ 마크다운 테이블을
-    2컬럼의 카드 박스로 예쁘게 렌더링합니다.
+    페르소나 카드 느낌으로 2컬럼에 렌더링합니다.
     """
-    # 1) 텍스트에서 표만 파싱
     df = parse_table_from_text(text)
-    
-    # 2) 파싱 성공했을 때만 카드 레이아웃
-    if not df.empty:
-        # 컬럼 이름 고정
-        df.columns = ['offer', 'condition', 'score']
-        
-        # 2컬럼 레이아웃
-        cols = st.columns(2, gap="large")
-        for idx, row in df.iterrows():
-            with cols[idx % 2]:
-                card_html = f"""
-                <div style="
-                    background-color: #262730;
-                    border-radius: 12px;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                    padding: 16px;
-                    margin-bottom: 16px;
-                ">
-                    <h5 style="
-                        color: #EAEBF0;
-                        margin: 0 0 8px;
-                        font-weight: 600;
-                    ">{row['offer']}</h5>
-                    <p style="
-                        margin: 0 0 4px;
-                        color: #A5D8E2;
-                        font-size: 0.9em;
-                    ">
-                        조건: {row['condition']}
-                    </p>
-                    <p style="
-                        margin: 0;
-                        color: #889AF5;
-                        font-size: 0.9em;
-                    ">
-                        매력도: {row['score']}/10
-                    </p>
-                </div>
-                """
-                st.markdown(card_html, unsafe_allow_html=True)
-    else:
-        # 파싱 실패 시 원본 텍스트만 깔끔하게 보여주기
-        fallback = f"""
-        <div style="
-            background-color: #262730;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-        ">
-            <pre style="
-                color: #EAEBF0;
-                white-space: pre-wrap;
-            ">{text}</pre>
-        </div>
-        """
-        st.markdown(fallback, unsafe_allow_html=True)
+    if df.empty:
+        # 실패 시 원본 텍스트 노출
+        st.markdown(f"""
+        <div style="background-color:#262730;border-radius:12px;padding:16px;margin-bottom:16px;">
+            <pre style="color:#EAEBF0;white-space:pre-wrap;">{text}</pre>
+        </div>""", unsafe_allow_html=True)
+        return
+
+    # 컬럼명 고정
+    df.columns = ['offer', 'condition', 'score']
+
+    cols = st.columns(2, gap="large")
+    for idx, row in df.iterrows():
+        with cols[idx % 2]:
+            # 왼쪽 카드(첫 번째)는 강조된 보더, 오른쪽은 기본
+            border = "border:2px solid #6C5FF5;" if idx == 0 else ""
+            st.markdown(f"""
+            <div style="
+                background-color: #262730;
+                border-radius: 12px;
+                {border}
+                padding: 20px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                margin-bottom: 16px;
+            ">
+                <h4 style="color:#EAEBF0; margin-bottom:8px;">{row['offer']}</h4>
+                <p style="color:#A5D8E2; font-size:0.9em; margin:0 0 4px;">
+                    조건: {row['condition']}
+                </p>
+                <p style="color:#889AF5; font-size:0.9em; margin:0;">
+                    매력도: {row['score']}/10
+                </p>
+            </div>""", unsafe_allow_html=True)
 
 def create_sunburst_chart(text: str) -> go.Figure:
     df = parse_table_from_text(text)
