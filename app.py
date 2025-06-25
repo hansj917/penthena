@@ -294,32 +294,124 @@ def display_content_strategy_cards(text: str):
     except Exception as e:
         st.error(f"콘텐츠 전략 카드 생성 오류: {e}"); st.dataframe(df)
 
-def display_core_offer(text: str):
+def display_campaign_goals(text: str):
+    """
+    AI가 반환한 ‘캠페인 목표’ 마크다운 테이블을
+    3컬럼 카드 레이아웃으로 예쁘게 렌더링합니다.
+    """
+    # 1) 텍스트에서 표만 파싱
     df = parse_table_from_text(text)
+    
+    # 2) 파싱 성공했으면 카드로
     if not df.empty:
-        df.columns = ['offer', 'condition', 'score']
-        items_html = ''
-        for _, row in df.iterrows():
-            items_html += (
-                '<li style="margin-bottom:8px;">'
-                f'<strong>{row["offer"]}</strong><br>'
-                f'<small>조건: {row["condition"]} · 매력도: {row["score"]}/10</small>'
-                '</li>'
-            )
-        html = (
-'<div style="background-color:#262730;border-radius:12px;padding:20px;margin-bottom:20px;">'
-'<ul style="list-style:disc;padding-left:20px;margin:0;">'
-f'{items_html}'
-'</ul>'
-'</div>'
-        )
+        # 컬럼명 고정
+        df.columns = ['Goal', 'KPI']
+        
+        # 최대 3컬럼 레이아웃
+        cols = st.columns(min(len(df), 3), gap="large")
+        for idx, row in df.iterrows():
+            with cols[idx % 3]:
+                card = f"""
+                <div style="
+                    background-color: #262730;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    padding: 16px;
+                    margin-bottom: 16px;
+                ">
+                    <h5 style="
+                        color: #EAEBF0;
+                        margin: 0 0 8px;
+                        font-weight: 600;
+                    ">{row['Goal']}</h5>
+                    <p style="
+                        margin: 0;
+                        color: #A5D8E2;
+                        font-size: 0.9em;
+                    ">핵심 지표(KPI): {row['KPI']}</p>
+                </div>
+                """
+                st.markdown(card, unsafe_allow_html=True)
     else:
-        html = (
-'<div style="background-color:#262730;border-radius:12px;padding:20px;margin-bottom:20px;">'
-f'<p style="white-space:pre-wrap;color:#EAEBF0;">{text}</p>'
-'</div>'
-        )
-    st.markdown(html, unsafe_allow_html=True)
+        # 파싱 실패 시 원본 텍스트 노출
+        fallback = f"""
+        <div style="
+            background-color: #262730;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        ">
+            <pre style="
+                color: #EAEBF0;
+                white-space: pre-wrap;
+            ">{text}</pre>
+        </div>
+        """
+        st.markdown(fallback, unsafe_allow_html=True)
+
+def display_core_offer(text: str):
+    """
+    AI가 반환한 ‘핵심 오퍼’ 마크다운 테이블을
+    2컬럼의 카드 박스로 예쁘게 렌더링합니다.
+    """
+    # 1) 텍스트에서 표만 파싱
+    df = parse_table_from_text(text)
+    
+    # 2) 파싱 성공했을 때만 카드 레이아웃
+    if not df.empty:
+        # 컬럼 이름 고정
+        df.columns = ['offer', 'condition', 'score']
+        
+        # 2컬럼 레이아웃
+        cols = st.columns(2, gap="large")
+        for idx, row in df.iterrows():
+            with cols[idx % 2]:
+                card_html = f"""
+                <div style="
+                    background-color: #262730;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    padding: 16px;
+                    margin-bottom: 16px;
+                ">
+                    <h5 style="
+                        color: #EAEBF0;
+                        margin: 0 0 8px;
+                        font-weight: 600;
+                    ">{row['offer']}</h5>
+                    <p style="
+                        margin: 0 0 4px;
+                        color: #A5D8E2;
+                        font-size: 0.9em;
+                    ">
+                        조건: {row['condition']}
+                    </p>
+                    <p style="
+                        margin: 0;
+                        color: #889AF5;
+                        font-size: 0.9em;
+                    ">
+                        매력도: {row['score']}/10
+                    </p>
+                </div>
+                """
+                st.markdown(card_html, unsafe_allow_html=True)
+    else:
+        # 파싱 실패 시 원본 텍스트만 깔끔하게 보여주기
+        fallback = f"""
+        <div style="
+            background-color: #262730;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        ">
+            <pre style="
+                color: #EAEBF0;
+                white-space: pre-wrap;
+            ">{text}</pre>
+        </div>
+        """
+        st.markdown(fallback, unsafe_allow_html=True)
 
 def create_sunburst_chart(text: str) -> go.Figure:
     df = parse_table_from_text(text)
@@ -615,7 +707,7 @@ def promotion_planning_pipeline(topic: str, research_context: str):
 def marketing_campaign_pipeline(topic: str, research_context: str):
     st.markdown("<h2>III. 마케팅 캠페인 분석</h2>", unsafe_allow_html=True)
     steps = {
-        "캠페인 목표": {"prompt_template": "'{p}' 마케팅 캠페인의 구체적인 목표 3가지를 '목표', '핵심지표(KPI)' 컬럼을 가진 마크다운 테이블로 만들어줘. 답변은 테이블 외에 다른 설명을 포함하지 마.", "display_type": "chart", "func": create_kpi_bar_chart},
+        "캠페인 목표": {"prompt_template": "'{p}' 마케팅 캠페인의 구체적인 목표 3가지를 '목표', '핵심지표(KPI)' 컬럼의 마크다운 테이블로 만들어줘. 답변은 테이블 외에 다른 설명을 포함하지 마.", "display_type": "custom", "func": display_campaign_goals},
         "타겟 & 핵심 메시지": {"prompt_template": "캠페인의 **가장 중요한 타겟 고객** 한 그룹을 명확히 정의하고, 그들의 마음을 움직일 수 있는 **짧고 강력한 핵심 슬로건**을 제안해줘. 답변은 반드시 '타겟: [간결한 타겟 설명]'과 '핵심 메시지: \"[기억하기 쉬운 슬로건]\"' 형식으로, 다른 설명 없이 두 줄로만 작성해줘.", "display_type": "custom", "func": display_message_and_target_card},
         "콘텐츠 전략": {"prompt_template": "최신 트렌드를 반영하여 '{p}' 캠페인을 위한 핵심 콘텐츠 아이디어 3가지를 '콘텐츠 형식', '주요 내용' 컬럼의 마크다운 테이블로 만들어줘.", "display_type": "custom", "func": display_content_strategy_cards},
         "채널 믹스": {"prompt_template": "'{p}' 캠페인에 활용할 미디어 채널 믹스를 '채널 구분(Owned/Paid/Earned)', '채널명', '예산 비중(%)' 컬럼의 마크다운 테이블로 만들어줘.", "display_type": "chart", "func": create_sunburst_chart},
