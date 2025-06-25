@@ -633,29 +633,58 @@ def main():
     st.set_page_config(page_title="PENTHENA AI Agent", layout="wide", initial_sidebar_state="expanded")
     load_css("style.css")
 
-    # --- 사이드바 토글 버튼 & CSS ---
+    # ——— 사이드바 토글 상태 초기화 ———
     if 'sidebar_hidden' not in st.session_state:
         st.session_state.sidebar_hidden = False
 
-    toggle_label = "▶️ 열기" if st.session_state.sidebar_hidden else "◀️ 닫기"
-    if st.button(toggle_label, use_container_width=True):
-        st.session_state.sidebar_hidden = not st.session_state.sidebar_hidden
-
-    sidebar_display = "none" if st.session_state.sidebar_hidden else "block"
-    main_margin   = "0rem"  if st.session_state.sidebar_hidden else "18rem"
-
+    # ——— 토글용 CSS ———
     st.markdown(f"""
-        <style>
-          /* 사이드바 보이기/숨기기 */
-          [data-testid="stSidebar"] {{
-            display: {sidebar_display} !important;
-          }}
-          /* 본문 좌측 여백 조정 */
-          [data-testid="stAppViewContainer"] {{
-            margin-left: {main_margin} !important;
-          }}
-        </style>
+    <style>
+      /* 사이드바 컨테이너 position relative 로 변경 */
+      [data-testid="stSidebar"] {{
+        position: relative;
+        display: {'none' if st.session_state.sidebar_hidden else 'block'} !important;
+      }}
+      /* 토글 버튼 스타일 */
+      [data-testid="stSidebar"] .toggle-btn {{
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 28px;
+        height: 28px;
+        background: #ffffff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      }}
+      /* 본문 영역 margn 조정 */
+      [data-testid="stAppViewContainer"] {{
+        margin-left: {'0px' if st.session_state.sidebar_hidden else '320px'} !important;
+      }}
+    </style>
     """, unsafe_allow_html=True)
+
+    # ——— 사이드바 안에 토글 버튼 삽입 ———
+    with st.sidebar:
+        # HTML 버튼으로 렌더링합니다.
+        st.markdown(f"""
+        <div class="toggle-btn" onclick="window.dispatchEvent(new CustomEvent('toggle-sidebar'))">
+          {'▶️' if st.session_state.sidebar_hidden else '◀️'}
+        </div>
+        """, unsafe_allow_html=True)
+
+        # 실제 파이썬 콜백 트리거
+        # (이벤트 감지는 아래 컴포넌트에서 처리)
+        if st.button("", key="toggle_sidebar_callback", help="사이드바 토글", label_visibility="collapsed"):
+            st.session_state.sidebar_hidden = not st.session_state.sidebar_hidden
+
+        # ── 이하 기존 사이드바 내용 계속 ──
+        st.markdown('<div class="sidebar-logo">PENTHENA</div>', unsafe_allow_html=True)
+        … (기존 사이드바 항목들) …
 
     # --------------------------------------------------------------------
     # 투명 배경을 못 덮고 있는 위젯들을 한 번에 투명 처리하는 CSS
