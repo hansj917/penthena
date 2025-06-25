@@ -295,17 +295,48 @@ def display_content_strategy_cards(text: str):
         st.error(f"콘텐츠 전략 카드 생성 오류: {e}"); st.dataframe(df)
 
 def display_core_offer(text: str):
-    """AI가 반환한 ‘핵심 오퍼’ 마크다운을 예쁜 박스 안에 넣어줍니다."""
-    html = f"""
-    <div style="
-        background-color: #262730;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 20px;
-    ">
-        {text.replace('\n', '<br>')}
-    </div>
-    """
+    """‘핵심 오퍼’ 마크다운 테이블을 파싱해, 깔끔한 HTML 리스트로 보여줍니다."""
+    # 1) 마크다운 테이블을 DataFrame으로 변환
+    df = parse_table_from_text(text)
+    if not df.empty:
+        # 2) 컬럼명 통일 (AI가 생성한 컬럼명에 따라 조정)
+        df.columns = ['offer', 'condition', 'score']  # 예: ['오퍼 내용','조건','매력도(10점)']
+        # 3) 각 행을 <li>로 변환
+        items_html = ""
+        for _, row in df.iterrows():
+            items_html += f"""
+            <li style="margin-bottom:8px;">
+              <strong>{row['offer']}</strong><br>
+              <small>조건: {row['condition']} · 매력도: {row['score']}/10</small>
+            </li>
+            """
+        # 4) 리스트를 감싸는 박스 HTML
+        html = f"""
+        <div style="
+            background-color: #262730;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        ">
+          <ul style="list-style: disc; padding-left: 20px; margin: 0;">
+            {items_html}
+          </ul>
+        </div>
+        """
+    else:
+        # 테이블 파싱에 실패했으면 기존 텍스트 그대로 표시
+        html = f"""
+        <div style="
+            background-color: #262730;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        ">
+          <p style="white-space: pre-wrap; color: #EAEBF0;">
+            {text}
+          </p>
+        </div>
+        """
     st.markdown(html, unsafe_allow_html=True)
 
 def create_sunburst_chart(text: str) -> go.Figure:
