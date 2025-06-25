@@ -631,26 +631,34 @@ def run_intelligent_agent(user_prompt):
             st.markdown(response.choices[0].message.content)
 
 def main():
-   st.set_page_config(page_title="PENTHENA AI Agent", layout="wide", initial_sidebar_state="expanded")
+   st.set_page_config(
+       page_title="PENTHENA AI Agent",
+       layout="wide",
+       initial_sidebar_state="expanded"
+    )
+                       
    # ——— 사이드바 열림/닫힘에 따라 메인 레이아웃 자동 조정 CSS ———
-       st.markdown("""
-       <style>
-         /* 사이드바 접힘/펼침 토글 컨테이너 스타일 */
-         [data-testid="stSidebar"] {
-           width: 320px !important;
-           min-width: 200px !important;
-           max-width: 400px !important;
-         }
-         /* 닫혔을 때: 메인 영역 좌측 여백 0 */
-         [data-testid="stSidebar"][aria-expanded="false"] ~ div[data-testid="stAppViewContainer"] {
-           margin-left: 0 !important;
-         }
-         /* 열렸을 때: 메인 영역 좌측 여백 == 사이드바 너비 */
-         [data-testid="stSidebar"][aria-expanded="true"] ~ div[data-testid="stAppViewContainer"] {
-           margin-left: 320px !important;
-         }
-       </style>
-       """, unsafe_allow_html=True)
+       st.markdown(
+           """
+           <style>
+             /* 사이드바 접힘/펼침 토글 컨테이너 스타일 */
+             [data-testid="stSidebar"] {
+               width: 320px !important;
+               min-width: 200px !important;
+               max-width: 400px !important;
+             }
+             /* 닫혔을 때: 메인 영역 좌측 여백 0 */
+             [data-testid="stSidebar"][aria-expanded="false"] ~ div[data-testid="stAppViewContainer"] {
+               margin-left: 0 !important;
+             }
+             /* 열렸을 때: 메인 영역 좌측 여백 == 사이드바 너비 */
+             [data-testid="stSidebar"][aria-expanded="true"] ~ div[data-testid="stAppViewContainer"] {
+               margin-left: 320px !important;
+             }
+           </style>
+           """,
+           unsafe_allow_html=True
+        )
 
     # --------------------------------------------------------------------
     # 투명 배경을 못 덮고 있는 위젯들을 한 번에 투명 처리하는 CSS
