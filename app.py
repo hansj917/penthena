@@ -69,7 +69,7 @@ class Agent:
         self.planner = Planner()
         self.executor = Executor()
         self.memory = Memory()
- def run(self, user_prompt: str) -> str:
+    def run(self, user_prompt: str) -> str:
         # 1) 과거 기록 조회
         past = self.memory.recall(user_prompt)
         # 2) 단계별 계획 수립
