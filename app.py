@@ -10,6 +10,10 @@
 # =================================================================================
 
 import streamlit as st
+if "cot_log" not in st.session_state:
+    st.session_state["cot_log"] = []      # CoT 로그 저장용
+if "long_term" not in st.session_state:
+    st.session_state["long_term"] = {}    # 장기 메모리 저장용
 import openai, os, json, time, re
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
@@ -747,6 +751,13 @@ def run_intelligent_agent(user_prompt):
         agent = Agent()
         final_answer = agent.run(user_prompt)
         st.markdown(final_answer)
+        with st.expander("🧠 에이전트 사고/행동/관찰 로그", expanded=False):
+            for idx, log in enumerate(st.session_state["cot_log"], start=1):
+                st.markdown(
+                    f"**{idx}. Thought:** {log['thought']}\n"
+                    f"> **Action:** {log['action']}\n"
+                    f"> **Observation:** {log['observation']}"
+                )
     else:
         with st.spinner("답변 생성 중..."):
             response = openai.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": user_prompt}])
@@ -901,6 +912,11 @@ def main():
         display_world_clocks()
         st.divider()
         display_exchange_rates()
+        st.markdown("#### 🗄️ Memory")
+        if st.session_state["long_term"]:
+            st.json(st.session_state["long_term"], expanded=False)
+        else:
+            st.caption("저장된 메모리 없음")
         st.divider()
 
         # ── 분석 기록 + 삭제 버튼 ──
