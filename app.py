@@ -83,14 +83,14 @@ class Agent:
             context["last_result"] = outcome
             results.append({"step": step, "result": outcome})
         # 4) 최종 답변 요약
-        summary = openai.ChatCompletion.create(
+        resp = openai.chat.completions.create(
             model="gpt-4o",
             messages=[
               {"role":"system","content":"Summarize the following step results into a final answer."},
               {"role":"user","content": json.dumps(results)}
             ],
             temperature=0
-        ).choices[0].message.content
+        summary = resp.choices[0].message.content
         return summary
 
 def load_css(file_name):
