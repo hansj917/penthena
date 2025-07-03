@@ -83,15 +83,30 @@ class Agent:
             context["last_result"] = outcome
             results.append({"step": step, "result": outcome})
         # 4) 최종 답변 요약
-        resp = openai.chat.completions.create(
+        <span style="color:red">
+        summary = openai.ChatCompletion.create(
             model="gpt-4o",
             messages=[
               {"role":"system","content":"Summarize the following step results into a final answer."},
               {"role":"user","content": json.dumps(results)}
             ],
             temperature=0
+        ).choices[0].message.content
+        return summary
+        </span>
+        
+        <span style="color:green">
+        resp = openai.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": "Summarize the following step results into a final answer."},
+                {"role": "user", "content": json.dumps(results)}
+            ],
+            temperature=0
+        )
         summary = resp.choices[0].message.content
         return summary
+        </span>
 
 def load_css(file_name):
     """지정된 CSS 파일을 읽어 Streamlit 앱에 적용하는 함수"""
