@@ -27,6 +27,68 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 tavily_api_key = os.getenv("TAVILY_API_KEY")
 tavily = TavilyClient(api_key=tavily_api_key)
 
+# === 1-A. Planner: 단계별 계획 생성 ===
+class Planner:
+    def plan(self, user_prompt: str) -> list[str]:
+        system = "You are a step-by-step planner. 분석 주제를 단계별로 나눠줘."
+        resp = openai.ChatCompletion.create(
+            model="gpt-4o",
+            messages=[{"role":"system","content":system},
+                      {"role":"user","content":user_prompt}],
+            temperature=0
+        )
+        # ChatGPT가 JSON 리스트 형태로 단계 배열을 반환한다고 가정
+        return json.loads(resp.choices[0].message.content)
+
+# === 1-B. Executor: 각 단계 실행 매핑 ===
+class Executor:
+    def execute(self, step: str, context: dict) -> any:
+        if step == "웹 검색 실행":
+            return perform_web_research_and_synthesis(context["user_prompt"])
+        if step == "시장 차트":
+            return create_market_chart(context["last_result"])
+        # 필요하다면 더 많은 매핑을 여기에 추가
+        return None
+
+# === 1-C. Memory: 결과 저장/재활용 ===
+class Memory:
+    def __init__(self):
+        self.store: list[dict] = []
+    def remember(self, record: dict):
+        self.store.append(record)
+    def recall(self, topic: str) -> list[dict]:
+        return [r for r in self.store if r.get("topic")==topic]
+
+# === 1-D. Agent: Planner + Executor + Memory 통합 ===
+class Agent:
+    def __init__(self):
+        self.planner = Planner()
+        self.executor = Executor()
+        self.memory = Memory()
+    def run(self, user_prompt: str) -> str:
+        # 1) 과거 기록 조회
+        past = self.memory.recall(user_prompt)
+        # 2) 단계별 계획 수립
+        steps = self.planner.plan(user_prompt)
+        context = {"user_prompt": user_prompt, "past": past, "last_result": None}
+        results = []
+        # 3) 단계별 실행 및 기억
+        for step in steps:
+            outcome = self.executor.execute(step, context)
+            self.memory.remember({"topic": user_prompt, "step": step, "result": outcome})
+            context["last_result"] = outcome
+            results.append({"step": step, "result": outcome})
+        # 4) 최종 답변 요약
+        summary = openai.ChatCompletion.create(
+            model="gpt-4o",
+            messages=[
+              {"role":"system","content":"Summarize the following step results into a final answer."},
+              {"role":"user","content": json.dumps(results)}
+            ],
+            temperature=0
+        ).choices[0].message.content
+        return summary
+
 def load_css(file_name):
     """지정된 CSS 파일을 읽어 Streamlit 앱에 적용하는 함수"""
     try:
@@ -682,19 +744,9 @@ def run_intelligent_agent(user_prompt):
     intent = classify_intent(user_prompt)
 
     if intent == "PLANNING_REQUEST":
-        research_context = perform_web_research_and_synthesis(user_prompt)
-        if not research_context:
-            st.error("초기 리서치에 실패하여 분석을 진행할 수 없습니다."); return
-        
-        display_research_briefing(research_context)
-        
-        competitor_names = get_competitor_data(user_prompt, research_context)
-        
-        product_planning_pipeline(user_prompt, research_context, competitor_names)
-        promotion_planning_pipeline(user_prompt, research_context)
-        marketing_campaign_pipeline(user_prompt, research_context)
-
-        st.success("모든 비즈니스 플랜 분석이 완료되었습니다.")
+        agent = Agent()
+        final_answer = agent.run(user_prompt)
+        st.markdown(final_answer)
     else:
         with st.spinner("답변 생성 중..."):
             response = openai.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": user_prompt}])
