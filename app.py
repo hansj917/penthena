@@ -69,7 +69,7 @@ class Agent:
         self.planner = Planner()
         self.executor = Executor()
         self.memory = Memory()
-    def run(self, user_prompt: str) -> str:
+ def run(self, user_prompt: str) -> str:
         # 1) 과거 기록 조회
         past = self.memory.recall(user_prompt)
         # 2) 단계별 계획 수립
@@ -83,19 +83,6 @@ class Agent:
             context["last_result"] = outcome
             results.append({"step": step, "result": outcome})
         # 4) 최종 답변 요약
-        <span style="color:red">
-        summary = openai.ChatCompletion.create(
-            model="gpt-4o",
-            messages=[
-              {"role":"system","content":"Summarize the following step results into a final answer."},
-              {"role":"user","content": json.dumps(results)}
-            ],
-            temperature=0
-        ).choices[0].message.content
-        return summary
-        </span>
-        
-        <span style="color:green">
         resp = openai.chat.completions.create(
             model="gpt-4o",
             messages=[
@@ -106,7 +93,6 @@ class Agent:
         )
         summary = resp.choices[0].message.content
         return summary
-        </span>
 
 def load_css(file_name):
     """지정된 CSS 파일을 읽어 Streamlit 앱에 적용하는 함수"""
