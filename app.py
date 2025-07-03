@@ -35,7 +35,7 @@ tavily = TavilyClient(api_key=tavily_api_key)
 class Planner:
     def plan(self, user_prompt: str) -> list[str]:
         system = "You are a step-by-step planner. 분석 주제를 단계별로 나눠줘."
-        resp = openai.ChatCompletion.create(
+        resp = openai.chat.completions.create(
             model="gpt-4o",
             messages=[{"role":"system","content":system},
                       {"role":"user","content":user_prompt}],
