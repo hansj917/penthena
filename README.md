@@ -1,4 +1,4 @@
-# PENTHENA Business Intelligence
+# This is my first vibe-coding project
 
 this is my first vibe coding output.
 Showcased during ai competition in the company i was in.
